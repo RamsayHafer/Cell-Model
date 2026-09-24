@@ -15,7 +15,7 @@ export function CellVisualization({ mode, markers, showMarkers = true }: { mode:
     <div className="cell-stage"><span className="stage-aura" aria-hidden="true"/><div className="cell-composition">
       <CellArtwork mode={mode} markers={visible} selectedId={selectedId} hoveredId={hoveredId}/>
       <svg className="marker-connectors" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        {visible.filter(marker => marker.cellularLocation !== 'surface').map(marker => <path key={marker.id} className={`connector connector--${marker.palette} ${selectedId && selectedId !== marker.id ? 'is-muted' : ''}`}
+        {visible.filter(marker => marker.cellularLocation === 'nuclear' || marker.cellularLocation === 'cytoplasmic').map(marker => <path key={marker.id} className={`connector connector--${marker.palette} ${selectedId && selectedId !== marker.id ? 'is-muted' : ''}`}
           d={`M ${marker.x + 2} ${marker.y + 2} Q ${(marker.x + marker.labelX) / 2 + 5} ${marker.y + 13} ${marker.labelX - 5} ${marker.labelY - 3}`} />)}
       </svg>
       {visible.map(marker => <MarkerHotspot key={marker.id} marker={marker} selected={selectedId === marker.id} muted={!!selectedId && selectedId !== marker.id} onSelect={() => setSelectedId(marker.id)} onHover={active => setHoveredId(active ? marker.id : null)}/>)}

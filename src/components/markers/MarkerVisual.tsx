@@ -89,30 +89,43 @@ export type MarkerVisualProps = MarkerVisualSpec & {
   decorative?: boolean;
 };
 
-export function MarkerVisual({ canonicalName, cellularLocation, visualFamily, visualVariant, palette: color, resultState, selected=false, hovered=false, decorative=true }: MarkerVisualProps) {
+export function MarkerVisual({ canonicalName, cellularLocation, visualFamily, visualVariant, palette: color, resultState, numericInterpretation, size=1, orientation=0, selected=false, hovered=false, decorative=true }: MarkerVisualProps) {
   const id = useId().replace(/:/g,'');
-  const { light, mid, dark, glow } = palette[color];
+  const neutralNumeric = resultState === 'numeric' && !numericInterpretation;
+  const { light, mid, dark, glow } = neutralNumeric
+    ? { light:'#e6e8ed', mid:'#9298a5', dark:'#5e6675', glow:'#c6cbd5' }
+    : palette[color];
   const paint: Paint = { light, mid, dark, glow, shaft:`url(#shaft-${id})`, bead:`url(#bead-${id})` };
-  const isSurface = visualFamily === 'membrane-receptor' || visualFamily === 'branched-receptor' || visualFamily === 'forked-receptor';
-  const isProtein = visualFamily === 'cytoplasmic-protein' || visualFamily === 'nuclear-protein';
-  const quiet = resultState === 'mentioned' || resultState === 'pending';
-  const missing = resultState === 'absent' || resultState === 'lost';
-  const opacity = missing ? .2 : resultState === 'reduced' ? .53 : quiet ? .48 : 1;
-  return <svg className={`marker-visual marker-visual--${color}`} viewBox="0 0 80 80" aria-hidden={decorative}
+  const family = cellularLocation === 'unknown' || neutralNumeric ? 'generic' : visualFamily;
+  const effectiveState = resultState === 'numeric' ? numericInterpretation ?? 'mentioned' : resultState;
+  const isSurface = family === 'membrane-receptor' || family === 'branched-receptor' || family === 'forked-receptor';
+  const isProtein = family === 'cytoplasmic-protein' || family === 'nuclear-protein';
+  const quiet = effectiveState === 'mentioned' || effectiveState === 'pending';
+  const missing = effectiveState === 'absent' || effectiveState === 'lost';
+  const opacity = missing ? .2 : effectiveState === 'reduced' ? .53 : quiet ? .48 : 1;
+  // Transform only the painted geometry around its viewBox center. The caller
+  // still owns positioning, selection, focus, and the interactive hit target.
+  const visualSize = Number.isFinite(size) && size > 0 ? size : 1;
+  const visualAngle = Number.isFinite(orientation) ? orientation : 0;
+  return <svg className={`marker-visual marker-visual--${color}`} viewBox="0 0 80 80" style={{ overflow:'visible' }} aria-hidden={decorative}
     role={decorative?undefined:'img'} aria-label={decorative?undefined:`${canonicalName}: ${resultState} (${cellularLocation})`}
-    data-family={visualFamily} data-location={cellularLocation} data-state={resultState} data-selected={selected} data-hovered={hovered}>
+    data-family={family} data-location={cellularLocation} data-state={resultState} data-selected={selected} data-hovered={hovered}>
     <defs>
       <linearGradient id={`shaft-${id}`} x1="0" y1="0" x2="1" y2="1"><stop stopColor={light}/><stop offset=".37" stopColor={mid}/><stop offset="1" stopColor={dark}/></linearGradient>
       <radialGradient id={`bead-${id}`} cx="30%" cy="20%" r="82%"><stop stopColor="#fff" stopOpacity=".88"/><stop offset=".14" stopColor={light}/><stop offset=".43" stopColor={mid}/><stop offset=".85" stopColor={dark}/></radialGradient>
     </defs>
-    <g opacity={opacity}>
-      {isSurface ? <SurfaceReceptor family={visualFamily} variant={visualVariant} paint={paint}/> :
-        isProtein ? <ProteinCluster family={visualFamily} variant={visualVariant} paint={paint}/> :
-          <Pattern family={visualFamily} paint={paint}/>}
+    <g transform={`translate(40 40) rotate(${visualAngle}) scale(${visualSize}) translate(-40 -40)`}>
+      <g opacity={opacity}>
+        {neutralNumeric ? <g><circle cx="40" cy="40" r="20" fill={glow} fillOpacity=".18" stroke={dark} strokeOpacity=".7" strokeWidth="2"/>
+          <text x="40" y="47" textAnchor="middle" fill={dark} fontSize="23" fontWeight="600">#</text></g> :
+          isSurface ? <SurfaceReceptor family={family} variant={visualVariant} paint={paint}/> :
+            isProtein ? <ProteinCluster family={family} variant={visualVariant} paint={paint}/> :
+              <Pattern family={family} paint={paint}/>}
+      </g>
+      {missing && <g><circle cx="40" cy="39" r="15" fill="#f7f1ff" fillOpacity=".7" stroke={dark} strokeOpacity=".85" strokeWidth="2" strokeDasharray="3 4"/>
+        <path d="M34 39h12" stroke={dark} strokeWidth="3" strokeLinecap="round"/></g>}
+      {effectiveState === 'pending' && <g><circle cx="55" cy="57" r="11" fill="#fff" fillOpacity=".9" stroke={dark} strokeWidth="1.8"/><path d="M55 51v6l4 2" stroke={dark} fill="none" strokeWidth="2" strokeLinecap="round"/></g>}
+      {effectiveState === 'mentioned' && !neutralNumeric && <circle cx="40" cy="40" r="26" fill="none" stroke={dark} strokeOpacity=".4" strokeWidth="1.7" strokeDasharray="2 4"/>}
     </g>
-    {missing && <g><circle cx="40" cy="39" r="15" fill="#f7f1ff" fillOpacity=".7" stroke={dark} strokeOpacity=".85" strokeWidth="2" strokeDasharray="3 4"/>
-      <path d="M34 39h12" stroke={dark} strokeWidth="3" strokeLinecap="round"/></g>}
-    {resultState === 'pending' && <g><circle cx="55" cy="57" r="11" fill="#fff" fillOpacity=".9" stroke={dark} strokeWidth="1.8"/><path d="M55 51v6l4 2" stroke={dark} fill="none" strokeWidth="2" strokeLinecap="round"/></g>}
-    {resultState === 'mentioned' && <circle cx="40" cy="40" r="26" fill="none" stroke={dark} strokeOpacity=".4" strokeWidth="1.7" strokeDasharray="2 4"/>}
   </svg>;
 }

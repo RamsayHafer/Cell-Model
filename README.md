@@ -16,7 +16,7 @@ Open the local URL printed by Vite. Use **A / B** to switch prototypes, tap a ma
 - `src/components/CellVisualization.tsx` owns selection and composes the view; accepts `markers`, `mode`, and `showMarkers`.
 - `src/components/CellArtwork.tsx` provides the inline SVG A treatment and artwork-first B treatment.
 - `src/components/markers/MarkerVisual.tsx` paints reusable gradient SVG families, including branched, forked, and general surface receptors; cytoplasmic and nuclear proteins; transcription, proliferation, mutation, fusion, amplification, loss, and generic glyphs. Variants refine a silhouette without adding a new marker-specific component.
-- `src/components/markers/types.ts` defines the portable `MarkerVisualSpec` contract: `canonicalName`, `cellularLocation`, `visualFamily`, optional `visualVariant`, `palette`, `resultState`, `size`, and `orientation`. Results can be present, reduced, absent, lost, pending, or mentioned.
+- `src/components/markers/types.ts` defines the portable `MarkerVisualSpec` contract: `canonicalName`, `cellularLocation`, `visualFamily`, optional `visualVariant`, `palette`, `resultState`, `size`, and `orientation`. Locations match Visit Explained: membrane, nuclear, cytoplasmic, and unknown. Results include present, reduced, absent, lost, pending, mentioned, and numeric.
 - `src/components/MarkerHotspot.tsx` handles accessible marker labels.
 - `src/components/MarkerDetailSheet.tsx` handles the compact mobile detail sheet.
 - `src/markers.ts` supplies the demo metadata, placement, and copy. The four-marker study shows CD30 and CD7 on the membrane, BCL2 in cytoplasm, and p53 in the nucleus as *illustrated examples*, not co-expression or patient findings.
@@ -24,6 +24,8 @@ Open the local URL printed by Vite. Use **A / B** to switch prototypes, tap a ma
 - `src/styles.css` holds self-contained component styling, palette, responsive layout, and reduced-motion support.
 
 Marker illustration coordinates and label positions are percentages of the 440 × 440 artwork canvas. To transplant the visuals, map the production marker model to `MarkerVisualSpec` and mount `MarkerVisual` at the existing graphic slot in `components/markers/CancerCellDiagram.tsx`. Keep that component's marker logic, placement, selection, accessibility, and evidence behavior. The Cell Lab does not import or change the production app. Replace B's asset without changing marker logic. `Ki-67: Discussed` is quiet rather than a positive stain; `CD7: Loss` is an empty imprint rather than a present receptor. App dependencies are React, React DOM, TypeScript, and Vite.
+
+`MarkerVisual` applies `size` and `orientation` to SVG artwork around its own center; it does not set a cell position or interactive hit target. Unknown locations use the generic family. An uninterpreted `numeric` result uses a neutral number symbol regardless of the provided family and palette. Only the optional `numericInterpretation` (`present`, `reduced`, or `absent`) lets upstream clinical logic give a numeric result a biologically interpreted visual. Marker names never choose shapes inside the renderer.
 
 A GitHub Actions visual check builds the app and uses Chromium at 390 × 844 to capture both four-marker prototypes, their close-ups, and the selected detail sheet. These screenshots are build artifacts, not a deployment.
 

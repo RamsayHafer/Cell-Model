@@ -14,7 +14,7 @@ export function CellArtwork({ mode, markers, selectedId, hoveredId }: { mode: Ce
       : <img className="art-image" src={cellB} alt="Dimensional illustrated lavender immune cell" />}
     {markers.map(m => <span key={m.id}
       className={`receptor receptor--${m.palette} receptor--${m.cellularLocation} receptor--${m.visualFamily} ${selectedId === m.id ? 'is-active' : ''} ${hoveredId === m.id ? 'is-hovered' : ''} ${selectedId && selectedId !== m.id ? 'is-muted' : ''}`}
-      style={{'--x': `${m.x}%`, '--y': `${m.y}%`, '--scale': m.size ?? 1, '--scale-active': (m.size ?? 1) * 1.12, '--angle': `${m.orientation ?? 0}deg`} as CSSProperties} aria-hidden="true">
+      style={{'--x': `${m.x}%`, '--y': `${m.y}%`} as CSSProperties} aria-hidden="true">
       <MarkerVisual {...m} selected={selectedId === m.id} hovered={hoveredId === m.id}/>
     </span>)}
   </div>;
