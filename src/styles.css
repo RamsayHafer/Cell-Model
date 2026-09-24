@@ -77,3 +77,4 @@
 .marker-label--cyan{background:linear-gradient(135deg,#effbfeed,#dff2f6dd)}
 .marker-label__subtitle{display:block;white-space:nowrap;font-size:9px;font-weight:500;line-height:1.1;color:#435b57}
 .marker-label--green:has(.marker-label__subtitle){min-height:45px;min-width:100px;padding-block:4px}
+.stage-caption{margin-top:15px}
