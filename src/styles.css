@@ -56,3 +56,12 @@
 .receptor--proliferation-pattern{width:46px;height:46px}
 .receptor--membrane::after{content:"";position:absolute;left:50%;bottom:1px;width:14px;height:6px;border-radius:50%;transform:translateX(-50%);background:#454d845a;filter:blur(3px);pointer-events:none}
 
+/* The illustrations carry the saturated color; labels stay soft. */
+.receptor--coral{--marker:#d83d25}
+.receptor--purple{--marker:#7420bc}
+.receptor--gold{--marker:#b8780b}
+.receptor--cyan{--marker:#008eb9}
+.marker-label--coral{background:linear-gradient(135deg,#fff0e9,#ffdbd0)}
+.marker-label--purple{background:linear-gradient(135deg,#f8efff,#e8d9f6)}
+.marker-label--gold{background:linear-gradient(135deg,#fff8e7,#f9e8bd)}
+.marker-label--cyan{background:linear-gradient(135deg,#ebfaff,#d6f1f8)}

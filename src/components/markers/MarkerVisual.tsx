@@ -4,16 +4,22 @@ import type { MarkerPalette, MarkerVisualSpec, VisualFamily } from './types';
 type Paint = { light: string; mid: string; dark: string; glow: string; shaft: string; bead: string };
 const palette: Record<MarkerPalette, Omit<Paint, 'shaft' | 'bead'>> = {
   blue: { light:'#9fdfff', mid:'#349ace', dark:'#175b94', glow:'#74c9f1' },
-  coral: { light:'#ffc194', mid:'#f35136', dark:'#a92d2c', glow:'#ff7959' },
-  purple: { light:'#dcb1fa', mid:'#8e43ce', dark:'#562287', glow:'#ab68e1' },
+  coral: { light:'#ffae78', mid:'#f04420', dark:'#812020', glow:'#ff6540' },
+  purple: { light:'#d79aff', mid:'#8422cf', dark:'#40106f', glow:'#a64ae8' },
   green: { light:'#b2f4c3', mid:'#49bf72', dark:'#247447', glow:'#71d792' },
-  gold: { light:'#ffe5a0', mid:'#e09a25', dark:'#915511', glow:'#f5b647' },
-  cyan: { light:'#a3f4ff', mid:'#00b8df', dark:'#066386', glow:'#50d8ef' },
+  gold: { light:'#ffdd72', mid:'#e49309', dark:'#754009', glow:'#ffb820' },
+  cyan: { light:'#82f4ff', mid:'#00afd7', dark:'#035578', glow:'#24cde9' },
 };
 
 function Pearl({ x, y, r, paint }: { x:number; y:number; r:number; paint:Paint }) {
-  return <g><circle cx={x} cy={y} r={r} fill={paint.bead} stroke={paint.dark} strokeOpacity=".58" strokeWidth="1.2"/>
-    <ellipse cx={x-r*.33} cy={y-r*.42} rx={r*.3} ry={r*.18} fill="#fff" fillOpacity=".86"/></g>;
+  return <g>
+    <circle cx={x+.45} cy={y+.85} r={r+.35} fill={paint.dark} fillOpacity=".9"/>
+    <circle cx={x} cy={y} r={r-.3} fill={paint.bead}/>
+    <path d={`M ${x-r*.72} ${y+r*.46} Q ${x} ${y+r*1.06} ${x+r*.72} ${y+r*.46}`}
+      fill="none" stroke={paint.dark} strokeOpacity=".48" strokeWidth="1.15" strokeLinecap="round"/>
+    <ellipse cx={x-r*.35} cy={y-r*.45} rx={r*.35} ry={r*.22} fill="#fff" fillOpacity=".95"/>
+    {r > 5 && <circle cx={x+r*.36} cy={y-r*.36} r={r*.1} fill="#fff" fillOpacity=".78"/>}
+  </g>;
 }
 
 function SurfaceReceptor({ family, variant, paint }: { family:VisualFamily; variant?:string; paint:Paint }) {
@@ -21,17 +27,17 @@ function SurfaceReceptor({ family, variant, paint }: { family:VisualFamily; vari
   const forked = family === 'forked-receptor';
   // Variants alter the silhouette within a family; the marker name is never consulted.
   const longArms = forked && variant === 'hooked';
-  const left = longArms ? 'M40 67 V45 C33 40 24 34 19 25' : 'M40 67 V44 C34 40 27 37 24 28';
-  const right = longArms ? 'M40 45 C48 38 55 34 58 22' : 'M40 44 C47 37 53 35 56 27';
+  const left = longArms ? 'M40 69 V45 C33 40 24 34 19 25' : 'M40 70 V45 C33 38 26 33 22 24';
+  const right = longArms ? 'M40 45 C48 38 55 34 58 22' : 'M40 45 C48 37 55 32 58 23';
   return <g>
-    <path d={`${left} ${right}`} fill="none" stroke={paint.dark} strokeWidth="13" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d={`${left} ${right}`} fill="none" stroke={paint.shaft} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round"/>
-    {branched && <><path d="M40 44 V25" fill="none" stroke={paint.dark} strokeWidth="12" strokeLinecap="round"/>
-      <path d="M40 44 V25" fill="none" stroke={paint.shaft} strokeWidth="8" strokeLinecap="round"/></>}
-    <path d="M37 61V46 M30 35L24 30 M49 35L54 29" fill="none" stroke="#fff" strokeWidth="2.1" strokeOpacity=".54" strokeLinecap="round"/>
-    <Pearl x={longArms?18:23} y={longArms?22:25} r={branched?8:7} paint={paint}/>
-    <Pearl x={longArms?59:56} y={longArms?21:24} r={branched?9:7} paint={paint}/>
-    {branched ? <Pearl x={40} y={19} r={8} paint={paint}/> :
+    <path d={`${left} ${right}`} fill="none" stroke={paint.dark} strokeWidth={branched?15:14} strokeLinecap="round" strokeLinejoin="round"/>
+    <path d={`${left} ${right}`} fill="none" stroke={paint.shaft} strokeWidth={branched?10:9} strokeLinecap="round" strokeLinejoin="round"/>
+    {branched && <><path d="M40 45 V18" fill="none" stroke={paint.dark} strokeWidth="14" strokeLinecap="round"/>
+      <path d="M40 45 V18" fill="none" stroke={paint.shaft} strokeWidth="9" strokeLinecap="round"/></>}
+    <path d="M36.5 62V47 M29 34L24 28 M48 34L54 27" fill="none" stroke="#fff" strokeWidth="2.2" strokeOpacity=".76" strokeLinecap="round"/>
+    <Pearl x={longArms?18:21} y={longArms?22:22} r={branched?9:7} paint={paint}/>
+    <Pearl x={longArms?59:59} y={longArms?21:21} r={branched?9.5:7} paint={paint}/>
+    {branched ? <Pearl x={40} y={15} r={9.5} paint={paint}/> :
       <Pearl x={40} y={38} r={forked?6:5} paint={paint}/>}
     {family === 'membrane-receptor' && <circle cx="40" cy="27" r="3" fill={paint.mid}/>}
   </g>;
@@ -45,6 +51,7 @@ function ProteinCluster({ family, variant, paint }: { family:VisualFamily; varia
     : compact ? [[28,27,8],[48,25,7],[24,47,7],[47,48,9],[37,38,6]]
       : [[25,28,8],[48,26,8],[24,51,7],[49,50,8],[39,40,7]];
   return <g>
+    <ellipse cx="39" cy="39" rx={nuclear?18:17} ry={nuclear?17:15} fill={paint.dark} fillOpacity={nuclear?'.22':'.28'}/>
     <path d={nuclear?'M27 28L42 22L54 34L44 49L27 51L22 41Z M27 28L44 49':'M28 27L48 25L47 48L24 47L28 27 M28 27L39 40'}
       fill="none" stroke={paint.dark} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
     <path d={nuclear?'M27 28L42 22L54 34L44 49L27 51L22 41Z':'M28 27L48 25L47 48L24 47'}
@@ -111,11 +118,14 @@ export function MarkerVisual({ canonicalName, cellularLocation, visualFamily, vi
     role={decorative?undefined:'img'} aria-label={decorative?undefined:`${canonicalName}: ${resultState} (${cellularLocation})`}
     data-family={family} data-location={cellularLocation} data-state={resultState} data-selected={selected} data-hovered={hovered}>
     <defs>
-      <linearGradient id={`shaft-${id}`} x1="0" y1="0" x2="1" y2="1"><stop stopColor={light}/><stop offset=".37" stopColor={mid}/><stop offset="1" stopColor={dark}/></linearGradient>
-      <radialGradient id={`bead-${id}`} cx="30%" cy="20%" r="82%"><stop stopColor="#fff" stopOpacity=".88"/><stop offset=".14" stopColor={light}/><stop offset=".43" stopColor={mid}/><stop offset=".85" stopColor={dark}/></radialGradient>
+      <linearGradient id={`shaft-${id}`} x1="0" y1="0" x2=".82" y2="1"><stop stopColor={light}/><stop offset=".18" stopColor={mid}/><stop offset=".54" stopColor={mid}/><stop offset="1" stopColor={dark}/></linearGradient>
+      <radialGradient id={`bead-${id}`} cx="27%" cy="18%" r="86%"><stop stopColor="#fff" stopOpacity=".86"/><stop offset=".12" stopColor={light}/><stop offset=".34" stopColor={mid}/><stop offset=".65" stopColor={mid}/><stop offset="1" stopColor={dark}/></radialGradient>
+      <filter id={`depth-${id}`} x="-35%" y="-35%" width="170%" height="180%">
+        <feDropShadow dx="1" dy="2.2" stdDeviation="1.35" floodColor={dark} floodOpacity=".42"/>
+      </filter>
     </defs>
     <g transform={`translate(40 40) rotate(${visualAngle}) scale(${visualSize}) translate(-40 -40)`}>
-      <g opacity={opacity}>
+      <g opacity={opacity} filter={!quiet && !missing && !neutralNumeric ? `url(#depth-${id})` : undefined}>
         {neutralNumeric ? <g><circle cx="40" cy="40" r="20" fill={glow} fillOpacity=".18" stroke={dark} strokeOpacity=".7" strokeWidth="2"/>
           <text x="40" y="47" textAnchor="middle" fill={dark} fontSize="23" fontWeight="600">#</text></g> :
           isSurface ? <SurfaceReceptor family={family} variant={visualVariant} paint={paint}/> :
