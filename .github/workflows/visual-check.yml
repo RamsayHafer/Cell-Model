@@ -1,0 +1,24 @@
+name: Cell Lab mobile visual check
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npm run build
+      - run: npm install --no-save --no-audit --no-fund playwright
+      - run: npx playwright install --with-deps chromium
+      - run: npm run dev -- --port 4173 > /tmp/cell-lab-vite.log 2>&1 &
+      - run: node preview/capture.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cell-lab-mobile-browser-screenshots
+          path: preview/browser-*.png

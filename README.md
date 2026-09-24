@@ -1,0 +1,36 @@
+# Visit Explained · Cell Lab
+
+An isolated visual component lab for two cancer marker cell treatments. All marker text and status values are demonstration content, not clinical interpretation.
+
+## Run
+
+```sh
+npm install
+npm run dev
+```
+
+Open the local URL printed by Vite. Use **A / B** to switch prototypes, tap a marker to open its detail sheet, switch between **Visit markers** and **Marker study**, and toggle **View cell without markers** to inspect the unmarked illustration. `npm run build` typechecks and builds production assets.
+
+## Portable parts
+
+- `src/components/CellVisualization.tsx` owns selection and composes the view; accepts `markers`, `mode`, and `showMarkers`.
+- `src/components/CellArtwork.tsx` provides the inline SVG A treatment and artwork-first B treatment.
+- `src/components/markers/MarkerVisual.tsx` paints reusable gradient SVG families, including branched, forked, and general surface receptors; cytoplasmic and nuclear proteins; transcription, proliferation, mutation, fusion, amplification, loss, and generic glyphs. Variants refine a silhouette without adding a new marker-specific component.
+- `src/components/markers/types.ts` defines the portable `MarkerVisualSpec` contract: `canonicalName`, `cellularLocation`, `visualFamily`, optional `visualVariant`, `palette`, `resultState`, `size`, and `orientation`. Results can be present, reduced, absent, lost, pending, or mentioned.
+- `src/components/MarkerHotspot.tsx` handles accessible marker labels.
+- `src/components/MarkerDetailSheet.tsx` handles the compact mobile detail sheet.
+- `src/markers.ts` supplies the demo metadata, placement, and copy. The four-marker study shows CD30 and CD7 on the membrane, BCL2 in cytoplasm, and p53 in the nucleus as *illustrated examples*, not co-expression or patient findings.
+- `src/assets/cell-a.svg` and `src/assets/cell-b.svg` are standalone editable illustration assets.
+- `src/styles.css` holds self-contained component styling, palette, responsive layout, and reduced-motion support.
+
+Marker illustration coordinates and label positions are percentages of the 440 × 440 artwork canvas. To transplant the visuals, map the production marker model to `MarkerVisualSpec` and mount `MarkerVisual` at the existing graphic slot in `components/markers/CancerCellDiagram.tsx`. Keep that component's marker logic, placement, selection, accessibility, and evidence behavior. The Cell Lab does not import or change the production app. Replace B's asset without changing marker logic. `Ki-67: Discussed` is quiet rather than a positive stain; `CD7: Loss` is an empty imprint rather than a present receptor. App dependencies are React, React DOM, TypeScript, and Vite.
+
+A GitHub Actions visual check builds the app and uses Chromium at 390 × 844 to capture both four-marker prototypes, their close-ups, and the selected detail sheet. These screenshots are build artifacts, not a deployment.
+
+The supplied approved mockup and subsequent close-up informed the revised cell treatment: rounded lavender membrane folds, a dimensional blue middle, a sculpted purple nucleus, and glossy, candy-colored receptors. The gradients are intentionally stylized and are not molecular structures. The cell artwork is generated with `src/assets/generate_cells.py`; the output SVG files are editable. Existing PNGs in `preview/` without a `browser-` prefix are rendered design comparisons; the `browser-` files from the workflow are actual Chromium captures.
+
+### Location references
+
+These primary atlas entries support the **illustrated compartment only**, not any patient-specific result: [CD4 at the plasma membrane](https://www.proteinatlas.org/ENSG00000010610-CD4/subcellular), [CD30 at the plasma membrane](https://www.proteinatlas.org/ENSG00000120949-TNFRSF8/subcellular), [Ki-67 at nucleoli/nucleoplasm and mitotic chromosomes](https://www.proteinatlas.org/ENSG00000148773-MKI67/subcellular), [BCL2 at mitochondria](https://www.proteinatlas.org/ENSG00000171791-BCL2/subcellular), and [p53 mainly in nucleoplasm](https://www.proteinatlas.org/ENSG00000141510-TP53/subcellular). [NCBI describes CD7 as a T-cell transmembrane protein](https://www.ncbi.nlm.nih.gov/gene/924). For a real patient, marker status, cell type, location, and interpretation must be grounded in the source pathology/visit content.
+
+The marker study intentionally leaves the cell artwork and composition unchanged while raising marker saturation and surface depth. BCL2 is represented as a stylized intracellular protein cluster in cytoplasm; the graphic does not depict a measured location in a particular patient.
