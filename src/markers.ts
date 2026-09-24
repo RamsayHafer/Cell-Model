@@ -59,12 +59,12 @@ export const markerStudyMarkers: Marker[] = [
 // clinical states and the four-location study remains available separately.
 export const referenceStudyMarkers: Marker[] = [
   { ...sampleMarkers[0], id:'reference-cd4', status:'Illustrated receptor', exampleOnly:true,
-    visualVariant:'reference-cd4', size:1.03, orientation:-21, x:30, y:26, labelX:19, labelY:12 },
+    visualVariant:'reference-cd4', size:1.03, orientation:-21, x:30, y:34, labelX:19, labelY:12 },
   { ...sampleMarkers[1], id:'reference-cd30', status:'Illustrated receptor', exampleOnly:true,
-    size:1.18, orientation:24, x:72, y:26, labelX:83, labelY:9 },
+    size:1.18, orientation:24, x:72, y:33, labelX:83, labelY:9 },
   { ...sampleMarkers[2], id:'reference-cd7', status:'Illustrated receptor', exampleOnly:true,
-    resultState:'present', size:1.26, orientation:-79, x:19, y:60, labelX:7, labelY:47 },
+    resultState:'present', size:1.26, orientation:-79, x:19, y:72, labelX:7, labelY:56 },
   { ...sampleMarkers[3], id:'reference-ki67', status:'Illustrated pattern', exampleOnly:true,
     resultState:'present', visualVariant:'reference-ki67', size:1.12,
-    x:67, y:71, labelX:91, labelY:87 },
+    x:67, y:82, labelX:91, labelY:96 },
 ];
