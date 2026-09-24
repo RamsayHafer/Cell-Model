@@ -68,24 +68,24 @@ function ReferenceReceptor({ variant, paint, id }: { variant:'reference-cd30'|'r
   </g>;
   return <g>
     {/* Low-opacity bloom follows the complete shape rather than a large circle. */}
-    <g filter={`url(#bloom-${id})`} opacity=".25">{silhouette}</g>
+    <g filter={`url(#bloom-${id})`} opacity=".32">{silhouette}</g>
     <ellipse cx="40" cy="70" rx="6" ry="3" fill={paint.dark} fillOpacity=".45" filter={`url(#contact-${id})`}/>
     <g fill="none" strokeLinecap="round" strokeLinejoin="round">
       {strokes.map((d,i)=><g key={i}>
         <path d={d} stroke={paint.dark} strokeWidth={i===0?9:7.8} strokeOpacity=".68" transform="translate(.75 1.2)"/>
         <path d={d} stroke={paint.shaft} strokeWidth={i===0?7.4:6.1}/>
       </g>)}
-      <path d={stem} stroke={paint.light} strokeWidth="1.25" strokeOpacity=".57" transform="translate(-1.7 -1)"/>
+      <path d={stem} stroke={paint.light} strokeWidth="1.05" strokeOpacity=".42" transform="translate(-1.7 -1)"/>
     </g>
     {heads.map(([cx,cy,rx,ry,angle],i)=><g key={i} transform={`rotate(${angle} ${cx} ${cy})`}>
-      <ellipse cx={cx+.65} cy={cy+1.25} rx={rx+.25} ry={ry+.4} fill={paint.dark} fillOpacity=".72"/>
+      <ellipse cx={cx+.5} cy={cy+.95} rx={rx} ry={ry+.15} fill={paint.dark} fillOpacity=".53"/>
       <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={paint.bead}/>
       <path d={`M ${cx-rx*.78} ${cy+ry*.37} Q ${cx} ${cy+ry*1.02} ${cx+rx*.83} ${cy+ry*.28}`}
         fill="none" stroke={paint.dark} strokeOpacity=".44" strokeWidth=".85"/>
-      <ellipse cx={cx-rx*.31} cy={cy-ry*.37} rx={rx*.44} ry={ry*.19} fill="#fff" fillOpacity=".68"
+      <ellipse cx={cx-rx*.31} cy={cy-ry*.37} rx={rx*.44} ry={ry*.19} fill="#fff" fillOpacity=".57"
         filter={`url(#specular-${id})`}/>
       <path d={`M ${cx-rx*.72} ${cy-ry*.07} Q ${cx-rx*.42} ${cy-ry*.72} ${cx+rx*.13} ${cy-ry*.79}`}
-        fill="none" stroke="#fff" strokeOpacity=".32" strokeWidth=".65"/>
+        fill="none" stroke="#fff" strokeOpacity=".24" strokeWidth=".65"/>
     </g>)}
   </g>;
 }
@@ -172,9 +172,9 @@ export function MarkerVisual({ canonicalName, cellularLocation, visualFamily, vi
       <filter id={`depth-${id}`} x="-35%" y="-35%" width="170%" height="180%">
         <feDropShadow dx="1" dy="2.2" stdDeviation="1.35" floodColor={dark} floodOpacity=".42"/>
       </filter>
-      <filter id={`bloom-${id}`} x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.3"/></filter>
+      <filter id={`bloom-${id}`} x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.8"/></filter>
       <filter id={`contact-${id}`} x="-70%" y="-100%" width="240%" height="300%"><feGaussianBlur stdDeviation="1.7"/></filter>
-      <filter id={`specular-${id}`} x="-35%" y="-80%" width="170%" height="260%"><feGaussianBlur stdDeviation=".48"/></filter>
+      <filter id={`specular-${id}`} x="-35%" y="-80%" width="170%" height="260%"><feGaussianBlur stdDeviation=".72"/></filter>
     </defs>
     <g transform={`translate(40 40) rotate(${visualAngle}) scale(${visualSize}) translate(-40 -40)`}>
       <g opacity={opacity} filter={!quiet && !missing && !neutralNumeric && !referenceVariant ? `url(#depth-${id})` : undefined}>
