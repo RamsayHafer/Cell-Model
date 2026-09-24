@@ -93,6 +93,38 @@ function ReferenceReceptor({ variant, paint, id }: { variant:'reference-cd30'|'r
   </g>;
 }
 
+// The other two accents in the supplied study reuse palette and state handling.
+// They are visual variants, so neither the renderer nor the app layout tests a
+// biological marker name to choose a silhouette.
+function ReferenceBlue({ paint, id }: { paint:Paint; id:string }) {
+  const stem = 'M40 70 C39 60 39 50 36 43 C33 38 29 35 27 29';
+  const branch = 'M36 43 C40 39 43 35 43 28';
+  return <g strokeLinecap="round" strokeLinejoin="round">
+    <g opacity=".42" filter={`url(#bloom-${id})`} fill="none" stroke={paint.mid} strokeWidth="9"><path d={stem}/><path d={branch}/></g>
+    <path d={`${stem} ${branch}`} fill="none" stroke={paint.dark} strokeWidth="6.9" opacity=".6" transform="translate(.6 1)"/>
+    <path d={stem} fill="none" stroke={paint.shaft} strokeWidth="5.6"/>
+    <path d={branch} fill="none" stroke={paint.shaft} strokeWidth="5"/>
+    {[[27,29,5.1],[43,28,4.7]].map(([x,y,r],i)=><g key={i}>
+      <circle cx={x+.3} cy={y+.8} r={r+.2} fill={paint.dark} opacity=".65"/>
+      <circle cx={x} cy={y} r={r} fill={`url(#reference-bead-${id})`}/>
+      <ellipse cx={x-1.3} cy={y-1.7} rx="1.9" ry="1.2" fill="white" opacity=".51" filter={`url(#specular-${id})`}/>
+    </g>)}
+  </g>;
+}
+
+function ReferenceProliferation({ paint, id }: { paint:Paint; id:string }) {
+  return <g>
+    <g fill={paint.glow} opacity=".36" filter={`url(#bloom-${id})`}>
+      {[[25,43,7],[41,34,6],[58,22,5],[47,53,5]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r+2}/>)}
+    </g>
+    {[[25,43,7],[41,34,6],[58,22,5],[47,53,5]].map(([x,y,r],i)=><g key={i}>
+      <circle cx={x+.8} cy={y+1.4} r={r} fill={paint.dark} opacity=".51"/>
+      <circle cx={x} cy={y} r={r} fill={`url(#reference-bead-${id})`}/>
+      <ellipse cx={x-2} cy={y-2} rx={r*.3} ry={r*.18} fill="white" opacity=".55" filter={`url(#specular-${id})`}/>
+    </g>)}
+  </g>;
+}
+
 function ProteinCluster({ family, variant, paint }: { family:VisualFamily; variant?:string; paint:Paint }) {
   const nuclear = family === 'nuclear-protein';
   const compact = variant === 'compact';
@@ -185,6 +217,8 @@ export function MarkerVisual({ canonicalName, cellularLocation, visualFamily, vi
         {neutralNumeric ? <g><circle cx="40" cy="40" r="20" fill={glow} fillOpacity=".18" stroke={dark} strokeOpacity=".7" strokeWidth="2"/>
           <text x="40" y="47" textAnchor="middle" fill={dark} fontSize="23" fontWeight="600">#</text></g> :
           referenceVariant ? <ReferenceReceptor variant={referenceVariant} paint={paint} id={id}/> :
+          isSurface && visualVariant === 'reference-cd4' ? <ReferenceBlue paint={paint} id={id}/> :
+          family === 'proliferation-pattern' && visualVariant === 'reference-ki67' ? <ReferenceProliferation paint={paint} id={id}/> :
           isSurface ? <SurfaceReceptor family={family} variant={visualVariant} paint={paint}/> :
             isProtein ? <ProteinCluster family={family} variant={visualVariant} paint={paint}/> :
               <Pattern family={family} paint={paint}/>}

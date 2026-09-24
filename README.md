@@ -20,7 +20,7 @@ Open the local URL printed by Vite. Use **A / B** to switch prototypes, tap a ma
 - `src/components/MarkerHotspot.tsx` handles accessible marker labels.
 - `src/components/MarkerDetailSheet.tsx` handles the compact mobile detail sheet.
 - `src/markers.ts` supplies the demo metadata, placement, and copy. The four-marker study shows CD30 and CD7 on the membrane, BCL2 in cytoplasm, and p53 in the nucleus as *illustrated examples*, not co-expression or patient findings.
-- `src/assets/cell-a.svg` and `src/assets/cell-b.svg` are standalone editable illustration assets.
+- `src/assets/cell-reference.svg` is the native, layered SVG used in A; `src/assets/generate_reference_cell.py` regenerates its ruffled membrane, translucent cytoplasm, and irregular nucleus from editable geometry. The earlier `cell-a.svg` and the B illustration are retained as separate assets.
 - `src/styles.css` holds self-contained component styling, palette, responsive layout, and reduced-motion support.
 
 Marker illustration coordinates and label positions are percentages of the 440 × 440 artwork canvas. To transplant the visuals, map the production marker model to `MarkerVisualSpec` and mount `MarkerVisual` at the existing graphic slot in `components/markers/CancerCellDiagram.tsx`. Keep that component's marker logic, placement, selection, accessibility, and evidence behavior. The Cell Lab does not import or change the production app. Replace B's asset without changing marker logic. `Ki-67: Discussed` is quiet rather than a positive stain; `CD7: Loss` is an empty imprint rather than a present receptor. App dependencies are React, React DOM, TypeScript, and Vite.
@@ -28,6 +28,8 @@ Marker illustration coordinates and label positions are percentages of the 440 �
 `MarkerVisual` applies `size` and `orientation` to SVG artwork around its own center; it does not set a cell position or interactive hit target. Unknown locations use the generic family. An uninterpreted `numeric` result uses a neutral number symbol regardless of the provided family and palette. Only the optional `numericInterpretation` (`present`, `reduced`, or `absent`) lets upstream clinical logic give a numeric result a biologically interpreted visual. Marker names never choose shapes inside the renderer.
 
 A GitHub Actions visual check builds the app and uses Chromium at 390 × 844 to capture both four-marker prototypes, their close-ups, and the selected detail sheet. These screenshots are build artifacts, not a deployment.
+
+Open `/?reference=1` to inspect the four-marker visual reference study (CD4, CD30, CD7, Ki-67); this scene is illustrative and represents no patient findings. The URL starts in the reference study, and its selector also lets you return to the visit or location study. The browser visual check captures this scene separately.
 
 The supplied approved mockup and subsequent close-up informed the revised cell treatment: rounded lavender membrane folds, a dimensional blue middle, a sculpted purple nucleus, and glossy, candy-colored receptors. The gradients are intentionally stylized and are not molecular structures. The cell artwork is generated with `src/assets/generate_cells.py`; the output SVG files are editable. Existing PNGs in `preview/` without a `browser-` prefix are rendered design comparisons; the `browser-` files from the workflow are actual Chromium captures.
 

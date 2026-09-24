@@ -19,4 +19,7 @@ await page.locator('.cell-composition').screenshot({path:'preview/browser-b-mark
 await page.getByRole('button', {name:'CD30: Illustrated receptor'}).click();
 await page.getByRole('region', {name:'CD30 details'}).waitFor();
 await page.screenshot({path:'preview/browser-b-selected.png'});
+await page.goto('http://127.0.0.1:4173/?reference=1', {waitUntil:'networkidle'});
+await page.screenshot({path:'preview/browser-reference-mobile.png'});
+await page.locator('.cell-composition').screenshot({path:'preview/browser-reference-cell.png'});
 await browser.close();

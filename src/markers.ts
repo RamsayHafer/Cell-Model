@@ -53,3 +53,18 @@ export const markerStudyMarkers: Marker[] = [
     reason:'This compact blue cluster demonstrates a nuclear marker, distinct from a membrane receptor.',
     quote:'A nuclear location example; no patient result is represented.' },
 ];
+
+// A dedicated visual reference scene, never a patient result. These positions
+// follow the supplied 244 × 259 illustration; the visit scene retains its
+// clinical states and the four-location study remains available separately.
+export const referenceStudyMarkers: Marker[] = [
+  { ...sampleMarkers[0], id:'reference-cd4', status:'Illustrated receptor', exampleOnly:true,
+    visualVariant:'reference-cd4', size:1.03, orientation:-21, x:30, y:26, labelX:19, labelY:12 },
+  { ...sampleMarkers[1], id:'reference-cd30', status:'Illustrated receptor', exampleOnly:true,
+    size:1.18, orientation:24, x:72, y:26, labelX:83, labelY:9 },
+  { ...sampleMarkers[2], id:'reference-cd7', status:'Illustrated receptor', exampleOnly:true,
+    resultState:'present', size:1.26, orientation:-79, x:19, y:60, labelX:7, labelY:47 },
+  { ...sampleMarkers[3], id:'reference-ki67', status:'Illustrated pattern', exampleOnly:true,
+    resultState:'present', visualVariant:'reference-ki67', size:1.12,
+    x:67, y:71, labelX:91, labelY:87 },
+];
