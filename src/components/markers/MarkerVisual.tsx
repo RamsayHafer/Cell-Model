@@ -54,23 +54,25 @@ function ReferenceReceptor({ variant, paint, id }: { variant:'reference-cd30'|'r
   // integrated with the illustrated membrane at mobile size.
   const stem = branched ? 'M40 72 C40 62 40 54 42 47 C44 42 41 40 40 39'
     : 'M41 70 C43 59 40 52 40 46 C39 42 37 40 36 38';
-  const left = branched ? 'M40 40 C37 36 33 32 30 25'
+  const left = branched ? 'M40 40 C37 36 32 32 28 25'
     : 'M36 39 C33 35 29 34 25 32 C22 30 21 28 21 27';
-  const right = branched ? 'M40 40 C44 37 49 33 51 26'
+  const right = branched ? 'M40 40 C44 37 50 33 54 26'
     : 'M37 39 C42 35 48 37 53 32 C56 29 58 27 58 25';
   const middle = 'M40 41 C39 35 40 27 40 22';
   const lowerBud = 'M41 39 C42 36 42 33 41 31';
   const strokes = [stem,left,right,...(branched?[middle,lowerBud]:[])];
   const heads = branched
-    ? [[30,23,4.4,4.5,-14],[40,20,4.2,4.5,7],[51,24,4.7,4.3,18],[42,31,3.6,3.9,-12]]
-    : [[21,27,4.4,4.8,-20],[58,25,4.6,4.3,15]];
-  const strokeWidth = (index:number) => index === 0 ? (branched?6.9:6.3) : (branched?5.1:4.8);
+    ? [[28,23,5.2,5.3,-14],[40,20,5.0,5.2,7],[54,24,5.3,5.0,18],[42,31,4.2,4.4,-12]]
+    : [[21,27,5.0,5.2,-20],[58,25,5.1,4.8,15]];
+  const strokeWidth = (index:number) => index === 0 ? (branched?6.9:6.5) : (branched?5.4:5.3);
   const silhouette = <g fill="none" strokeLinecap="round" strokeLinejoin="round">
     {strokes.map((d,i)=><path key={i} d={d} stroke={paint.mid} strokeWidth={strokeWidth(i)}/>)}
     {heads.map(([cx,cy,rx,ry,angle],i)=><ellipse key={i} cx={cx} cy={cy} rx={rx} ry={ry}
       transform={`rotate(${angle} ${cx} ${cy})`} fill={paint.mid}/>)}
   </g>;
   return <g>
+    <ellipse cx={branched?42:40} cy={branched?31:35} rx={branched?28:24} ry={branched?26:25}
+      fill={paint.glow} fillOpacity={branched?'.14':'.09'} filter={`url(#bloom-${id})`}/>
     <g filter={`url(#bloom-${id})`} opacity=".38">{silhouette}</g>
     <ellipse cx="40" cy="70" rx="5.5" ry="2.7" fill={paint.dark} fillOpacity=".39" filter={`url(#contact-${id})`}/>
     <g fill="none" strokeLinecap="round" strokeLinejoin="round">
