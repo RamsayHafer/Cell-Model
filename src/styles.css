@@ -65,3 +65,13 @@
 .marker-label--purple{background:linear-gradient(135deg,#f8efff,#e8d9f6)}
 .marker-label--gold{background:linear-gradient(135deg,#fff8e7,#f9e8bd)}
 .marker-label--cyan{background:linear-gradient(135deg,#ebfaff,#d6f1f8)}
+
+/* Reference treatment: smaller, translucent pills with a soft local bloom. */
+.marker-label{min-height:34px;min-width:62px;padding:0 10px;border-radius:18px;font-size:13px;
+  border:1px solid #fffc;box-shadow:0 3px 10px color-mix(in srgb,var(--marker) 13%,transparent),0 0 12px color-mix(in srgb,var(--marker) 7%,transparent),inset 0 1px 2px #fff9;
+  backdrop-filter:blur(3px)}
+.marker-label::before{content:"";position:absolute;inset:-5px}
+.marker-label--coral{background:linear-gradient(135deg,#fff2edec,#ffe0d5df)}
+.marker-label--purple{background:linear-gradient(135deg,#f9f0ffee,#e9dcf5df)}
+.marker-label--gold{background:linear-gradient(135deg,#fff9ebed,#f9eacbde)}
+.marker-label--cyan{background:linear-gradient(135deg,#effbfeed,#dff2f6dd)}

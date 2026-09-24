@@ -11,6 +11,9 @@ const palette: Record<MarkerPalette, Omit<Paint, 'shaft' | 'bead'>> = {
   cyan: { light:'#82f4ff', mid:'#00afd7', dark:'#035578', glow:'#24cde9' },
 };
 
+const isSurfaceFamily = (family: VisualFamily) =>
+  family === 'membrane-receptor' || family === 'branched-receptor' || family === 'forked-receptor';
+
 function Pearl({ x, y, r, paint }: { x:number; y:number; r:number; paint:Paint }) {
   return <g>
     <circle cx={x+.45} cy={y+.85} r={r+.35} fill={paint.dark} fillOpacity=".9"/>
@@ -40,6 +43,50 @@ function SurfaceReceptor({ family, variant, paint }: { family:VisualFamily; vari
     {branched ? <Pearl x={40} y={29} r={9.5} paint={paint}/> :
       <Pearl x={40} y={38} r={forked?6:5} paint={paint}/>}
     {family === 'membrane-receptor' && <circle cx="40" cy="27" r="3" fill={paint.mid}/>}
+  </g>;
+}
+
+// Hand-tuned silhouettes for the illustration study. All geometry is selected
+// by visualVariant; the portable renderer never reads a marker name to paint.
+function ReferenceReceptor({ variant, paint, id }: { variant:'reference-cd30'|'reference-cd7'; paint:Paint; id:string }) {
+  const branched = variant === 'reference-cd30';
+  const stem = branched ? 'M40 71 C40 62 40 54 42 47 C42 44 41 42 40 40'
+    : 'M41 70 C42 61 40 54 40 48 C39 44 38 42 37 40';
+  const left = branched ? 'M40 42 C36 38 31 35 26 29 C24 27 23 25 23 23'
+    : 'M37 41 C34 37 30 35 24 32 C22 31 20 29 20 27';
+  const right = branched ? 'M40 42 C44 38 49 36 53 31 C56 28 57 25 58 24'
+    : 'M38 41 C42 37 49 37 54 33 C57 31 58 28 58 25';
+  const middle = 'M40 41 C40 38 41 34 41 31';
+  const strokes = [stem,left,right,...(branched?[middle]:[])];
+  const heads = branched
+    ? [[23,22,5.7,5.1,-16],[41,29,5.8,5.5,12],[59,23,6.2,5.4,23]]
+    : [[20,27,5.2,5.5,-20],[59,24,5.7,5.1,18],[38,40,4.1,4.5,-10]];
+  const silhouette = <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+    {strokes.map((d,i)=><path key={i} d={d} stroke={paint.mid} strokeWidth={i===0?8.2:6.7}/>)}
+    {heads.map(([cx,cy,rx,ry,angle],i)=><ellipse key={i} cx={cx} cy={cy} rx={rx} ry={ry}
+      transform={`rotate(${angle} ${cx} ${cy})`} fill={paint.mid}/>)}
+  </g>;
+  return <g>
+    {/* Low-opacity bloom follows the complete shape rather than a large circle. */}
+    <g filter={`url(#bloom-${id})`} opacity=".25">{silhouette}</g>
+    <ellipse cx="40" cy="70" rx="6" ry="3" fill={paint.dark} fillOpacity=".45" filter={`url(#contact-${id})`}/>
+    <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+      {strokes.map((d,i)=><g key={i}>
+        <path d={d} stroke={paint.dark} strokeWidth={i===0?9:7.8} strokeOpacity=".68" transform="translate(.75 1.2)"/>
+        <path d={d} stroke={paint.shaft} strokeWidth={i===0?7.4:6.1}/>
+      </g>)}
+      <path d={stem} stroke={paint.light} strokeWidth="1.25" strokeOpacity=".57" transform="translate(-1.7 -1)"/>
+    </g>
+    {heads.map(([cx,cy,rx,ry,angle],i)=><g key={i} transform={`rotate(${angle} ${cx} ${cy})`}>
+      <ellipse cx={cx+.65} cy={cy+1.25} rx={rx+.25} ry={ry+.4} fill={paint.dark} fillOpacity=".72"/>
+      <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={paint.bead}/>
+      <path d={`M ${cx-rx*.78} ${cy+ry*.37} Q ${cx} ${cy+ry*1.02} ${cx+rx*.83} ${cy+ry*.28}`}
+        fill="none" stroke={paint.dark} strokeOpacity=".44" strokeWidth=".85"/>
+      <ellipse cx={cx-rx*.31} cy={cy-ry*.37} rx={rx*.44} ry={ry*.19} fill="#fff" fillOpacity=".68"
+        filter={`url(#specular-${id})`}/>
+      <path d={`M ${cx-rx*.72} ${cy-ry*.07} Q ${cx-rx*.42} ${cy-ry*.72} ${cx+rx*.13} ${cy-ry*.79}`}
+        fill="none" stroke="#fff" strokeOpacity=".32" strokeWidth=".65"/>
+    </g>)}
   </g>;
 }
 
@@ -104,8 +151,10 @@ export function MarkerVisual({ canonicalName, cellularLocation, visualFamily, vi
     : palette[color];
   const paint: Paint = { light, mid, dark, glow, shaft:`url(#shaft-${id})`, bead:`url(#bead-${id})` };
   const family = cellularLocation === 'unknown' || neutralNumeric ? 'generic' : visualFamily;
+  const referenceVariant = isSurfaceFamily(family) && (visualVariant === 'reference-cd30' || visualVariant === 'reference-cd7')
+    ? visualVariant : null;
   const effectiveState = resultState === 'numeric' ? numericInterpretation ?? 'mentioned' : resultState;
-  const isSurface = family === 'membrane-receptor' || family === 'branched-receptor' || family === 'forked-receptor';
+  const isSurface = isSurfaceFamily(family);
   const isProtein = family === 'cytoplasmic-protein' || family === 'nuclear-protein';
   const quiet = effectiveState === 'mentioned' || effectiveState === 'pending';
   const missing = effectiveState === 'absent' || effectiveState === 'lost';
@@ -123,11 +172,15 @@ export function MarkerVisual({ canonicalName, cellularLocation, visualFamily, vi
       <filter id={`depth-${id}`} x="-35%" y="-35%" width="170%" height="180%">
         <feDropShadow dx="1" dy="2.2" stdDeviation="1.35" floodColor={dark} floodOpacity=".42"/>
       </filter>
+      <filter id={`bloom-${id}`} x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.3"/></filter>
+      <filter id={`contact-${id}`} x="-70%" y="-100%" width="240%" height="300%"><feGaussianBlur stdDeviation="1.7"/></filter>
+      <filter id={`specular-${id}`} x="-35%" y="-80%" width="170%" height="260%"><feGaussianBlur stdDeviation=".48"/></filter>
     </defs>
     <g transform={`translate(40 40) rotate(${visualAngle}) scale(${visualSize}) translate(-40 -40)`}>
-      <g opacity={opacity} filter={!quiet && !missing && !neutralNumeric ? `url(#depth-${id})` : undefined}>
+      <g opacity={opacity} filter={!quiet && !missing && !neutralNumeric && !referenceVariant ? `url(#depth-${id})` : undefined}>
         {neutralNumeric ? <g><circle cx="40" cy="40" r="20" fill={glow} fillOpacity=".18" stroke={dark} strokeOpacity=".7" strokeWidth="2"/>
           <text x="40" y="47" textAnchor="middle" fill={dark} fontSize="23" fontWeight="600">#</text></g> :
+          referenceVariant ? <ReferenceReceptor variant={referenceVariant} paint={paint} id={id}/> :
           isSurface ? <SurfaceReceptor family={family} variant={visualVariant} paint={paint}/> :
             isProtein ? <ProteinCluster family={family} variant={visualVariant} paint={paint}/> :
               <Pattern family={family} paint={paint}/>}
