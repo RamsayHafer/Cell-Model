@@ -32,12 +32,12 @@ function SurfaceReceptor({ family, variant, paint }: { family:VisualFamily; vari
   return <g>
     <path d={`${left} ${right}`} fill="none" stroke={paint.dark} strokeWidth={branched?15:14} strokeLinecap="round" strokeLinejoin="round"/>
     <path d={`${left} ${right}`} fill="none" stroke={paint.shaft} strokeWidth={branched?10:9} strokeLinecap="round" strokeLinejoin="round"/>
-    {branched && <><path d="M40 45 V18" fill="none" stroke={paint.dark} strokeWidth="14" strokeLinecap="round"/>
-      <path d="M40 45 V18" fill="none" stroke={paint.shaft} strokeWidth="9" strokeLinecap="round"/></>}
+    {branched && <><path d="M40 45 V29" fill="none" stroke={paint.dark} strokeWidth="14" strokeLinecap="round"/>
+      <path d="M40 45 V29" fill="none" stroke={paint.shaft} strokeWidth="9" strokeLinecap="round"/></>}
     <path d="M36.5 62V47 M29 34L24 28 M48 34L54 27" fill="none" stroke="#fff" strokeWidth="2.2" strokeOpacity=".76" strokeLinecap="round"/>
     <Pearl x={longArms?18:21} y={longArms?22:22} r={branched?9:7} paint={paint}/>
     <Pearl x={longArms?59:59} y={longArms?21:21} r={branched?9.5:7} paint={paint}/>
-    {branched ? <Pearl x={40} y={15} r={9.5} paint={paint}/> :
+    {branched ? <Pearl x={40} y={29} r={9.5} paint={paint}/> :
       <Pearl x={40} y={38} r={forked?6:5} paint={paint}/>}
     {family === 'membrane-receptor' && <circle cx="40" cy="27" r="3" fill={paint.mid}/>}
   </g>;
