@@ -66,5 +66,5 @@ export const referenceStudyMarkers: Marker[] = [
     resultState:'present', size:1.26, orientation:-79, x:19, y:72, labelX:7, labelY:56 },
   { ...sampleMarkers[3], id:'reference-ki67', status:'inside cell', exampleOnly:true,
     resultState:'present', visualVariant:'reference-ki67', size:1.12,
-    x:67, y:82, labelX:91, labelY:96 },
+    x:67, y:82, labelX:87, labelY:96 },
 ];
