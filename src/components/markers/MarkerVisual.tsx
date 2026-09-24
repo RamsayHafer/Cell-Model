@@ -84,10 +84,10 @@ function ReferenceReceptor({ variant, paint, id }: { variant:'reference-cd30'|'r
     </g>
     {heads.map(([cx,cy,rx,ry,angle],i)=><g key={i} transform={`rotate(${angle} ${cx} ${cy})`}>
       <ellipse cx={cx+.4} cy={cy+.7} rx={rx} ry={ry+.1} fill={paint.dark} fillOpacity=".38"/>
-      <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={paint.bead}/>
+      <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={`url(#reference-bead-${id})`}/>
       <path d={`M ${cx-rx*.73} ${cy+ry*.38} Q ${cx} ${cy+ry*.96} ${cx+rx*.8} ${cy+ry*.3}`}
         fill="none" stroke={paint.dark} strokeOpacity=".31" strokeWidth=".6"/>
-      <ellipse cx={cx-rx*.3} cy={cy-ry*.38} rx={rx*.43} ry={ry*.22} fill="#fff" fillOpacity=".54"
+      <ellipse cx={cx-rx*.3} cy={cy-ry*.38} rx={rx*.43} ry={ry*.22} fill="#fff" fillOpacity=".38"
         filter={`url(#specular-${id})`}/>
     </g>)}
   </g>;
@@ -172,6 +172,7 @@ export function MarkerVisual({ canonicalName, cellularLocation, visualFamily, vi
     <defs>
       <linearGradient id={`shaft-${id}`} x1="0" y1="0" x2=".82" y2="1"><stop stopColor={light}/><stop offset=".18" stopColor={mid}/><stop offset=".54" stopColor={mid}/><stop offset="1" stopColor={dark}/></linearGradient>
       <radialGradient id={`bead-${id}`} cx="27%" cy="18%" r="86%"><stop stopColor="#fff" stopOpacity=".86"/><stop offset=".12" stopColor={light}/><stop offset=".34" stopColor={mid}/><stop offset=".65" stopColor={mid}/><stop offset="1" stopColor={dark}/></radialGradient>
+      <radialGradient id={`reference-bead-${id}`} cx="30%" cy="19%" r="82%"><stop stopColor={light} stopOpacity=".88"/><stop offset=".22" stopColor={light}/><stop offset=".62" stopColor={mid}/><stop offset="1" stopColor={dark} stopOpacity=".84"/></radialGradient>
       <filter id={`depth-${id}`} x="-35%" y="-35%" width="170%" height="180%">
         <feDropShadow dx="1" dy="2.2" stdDeviation="1.35" floodColor={dark} floodOpacity=".42"/>
       </filter>
