@@ -54,15 +54,15 @@ function ReferenceReceptor({ variant, paint, id }: { variant:'reference-cd30'|'r
   // integrated with the illustrated membrane at mobile size.
   const stem = branched ? 'M40 72 C40 62 40 54 42 47 C44 42 41 40 40 39'
     : 'M41 70 C43 59 40 52 40 46 C39 42 37 40 36 38';
-  const left = branched ? 'M40 40 C37 36 32 32 28 25'
+  const left = branched ? 'M40 40 C37 32 32 28 26 15'
     : 'M36 39 C33 35 29 34 25 32 C22 30 21 28 21 27';
-  const right = branched ? 'M40 40 C44 37 50 33 54 26'
+  const right = branched ? 'M40 40 C45 32 53 29 58 17'
     : 'M37 39 C42 35 48 37 53 32 C56 29 58 27 58 25';
-  const middle = 'M40 41 C39 35 40 27 40 22';
-  const lowerBud = 'M41 39 C42 36 42 33 41 31';
+  const middle = 'M40 41 C40 31 40 22 40 12';
+  const lowerBud = 'M41 39 C42 36 44 30 44 27';
   const strokes = [stem,left,right,...(branched?[middle,lowerBud]:[])];
   const heads = branched
-    ? [[28,23,5.2,5.3,-14],[40,20,5.0,5.2,7],[54,24,5.3,5.0,18],[42,31,4.2,4.4,-12]]
+    ? [[26,14,5.2,5.3,-14],[40,11,5.0,5.2,7],[58,16,5.3,5.0,18],[44,27,4.2,4.4,-12]]
     : [[21,27,5.0,5.2,-20],[58,25,5.1,4.8,15]];
   const strokeWidth = (index:number) => index === 0 ? (branched?6.9:6.5) : (branched?5.4:5.3);
   const silhouette = <g fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -97,14 +97,14 @@ function ReferenceReceptor({ variant, paint, id }: { variant:'reference-cd30'|'r
 // They are visual variants, so neither the renderer nor the app layout tests a
 // biological marker name to choose a silhouette.
 function ReferenceBlue({ paint, id }: { paint:Paint; id:string }) {
-  const stem = 'M40 70 C39 60 39 50 36 43 C33 38 29 35 27 29';
-  const branch = 'M36 43 C40 39 43 35 43 28';
+  const stem = 'M40 70 C39 57 37 45 34 34 C30 26 25 16 25 -2';
+  const branch = 'M34 34 C39 27 42 18 42 -2';
   return <g strokeLinecap="round" strokeLinejoin="round">
     <g opacity=".42" filter={`url(#bloom-${id})`} fill="none" stroke={paint.mid} strokeWidth="9"><path d={stem}/><path d={branch}/></g>
     <path d={`${stem} ${branch}`} fill="none" stroke={paint.dark} strokeWidth="6.9" opacity=".6" transform="translate(.6 1)"/>
     <path d={stem} fill="none" stroke={paint.shaft} strokeWidth="5.6"/>
     <path d={branch} fill="none" stroke={paint.shaft} strokeWidth="5"/>
-    {[[27,29,5.1],[43,28,4.7]].map(([x,y,r],i)=><g key={i}>
+    {[[25,-2,5.1],[42,-2,4.7]].map(([x,y,r],i)=><g key={i}>
       <circle cx={x+.3} cy={y+.8} r={r+.2} fill={paint.dark} opacity=".65"/>
       <circle cx={x} cy={y} r={r} fill={`url(#reference-bead-${id})`}/>
       <ellipse cx={x-1.3} cy={y-1.7} rx="1.9" ry="1.2" fill="white" opacity=".51" filter={`url(#specular-${id})`}/>

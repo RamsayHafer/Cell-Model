@@ -64,7 +64,7 @@ export const referenceStudyMarkers: Marker[] = [
     size:1.18, orientation:24, x:72, y:33, labelX:83, labelY:9 },
   { ...sampleMarkers[2], id:'reference-cd7', status:'Illustrated receptor', exampleOnly:true,
     resultState:'present', size:1.26, orientation:-79, x:19, y:72, labelX:7, labelY:56 },
-  { ...sampleMarkers[3], id:'reference-ki67', status:'Illustrated pattern', exampleOnly:true,
+  { ...sampleMarkers[3], id:'reference-ki67', status:'inside cell', exampleOnly:true,
     resultState:'present', visualVariant:'reference-ki67', size:1.12,
     x:67, y:82, labelX:91, labelY:96 },
 ];
