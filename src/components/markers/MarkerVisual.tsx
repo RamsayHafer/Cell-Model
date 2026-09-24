@@ -4,8 +4,8 @@ import type { MarkerPalette, MarkerVisualSpec, VisualFamily } from './types';
 type Paint = { light: string; mid: string; dark: string; glow: string; shaft: string; bead: string };
 const palette: Record<MarkerPalette, Omit<Paint, 'shaft' | 'bead'>> = {
   blue: { light:'#9fdfff', mid:'#349ace', dark:'#175b94', glow:'#74c9f1' },
-  coral: { light:'#ffae78', mid:'#f04420', dark:'#812020', glow:'#ff6540' },
-  purple: { light:'#d79aff', mid:'#8422cf', dark:'#40106f', glow:'#a64ae8' },
+  coral: { light:'#ffafa3', mid:'#ec5241', dark:'#922b2d', glow:'#fa7869' },
+  purple: { light:'#d9b3f6', mid:'#8746c3', dark:'#512985', glow:'#b08ade' },
   green: { light:'#b2f4c3', mid:'#49bf72', dark:'#247447', glow:'#71d792' },
   gold: { light:'#ffdd72', mid:'#e49309', dark:'#754009', glow:'#ffb820' },
   cyan: { light:'#82f4ff', mid:'#00afd7', dark:'#035578', glow:'#24cde9' },
@@ -50,42 +50,43 @@ function SurfaceReceptor({ family, variant, paint }: { family:VisualFamily; vari
 // by visualVariant; the portable renderer never reads a marker name to paint.
 function ReferenceReceptor({ variant, paint, id }: { variant:'reference-cd30'|'reference-cd7'; paint:Paint; id:string }) {
   const branched = variant === 'reference-cd30';
-  const stem = branched ? 'M40 71 C40 62 40 54 42 47 C42 44 41 42 40 40'
-    : 'M41 70 C42 61 40 54 40 48 C39 44 38 42 37 40';
-  const left = branched ? 'M40 42 C36 38 31 35 26 29 C24 27 23 25 23 23'
-    : 'M37 41 C34 37 30 35 24 32 C22 31 20 29 20 27';
-  const right = branched ? 'M40 42 C44 38 49 36 53 31 C56 28 57 25 58 24'
-    : 'M38 41 C42 37 49 37 54 33 C57 31 58 28 58 25';
-  const middle = 'M40 41 C40 38 41 34 41 31';
-  const strokes = [stem,left,right,...(branched?[middle]:[])];
+  // Compact, uneven tip clusters and tapered curves keep the receptors
+  // integrated with the illustrated membrane at mobile size.
+  const stem = branched ? 'M40 72 C40 62 40 54 42 47 C44 42 41 40 40 39'
+    : 'M41 70 C43 59 40 52 40 46 C39 42 37 40 36 38';
+  const left = branched ? 'M40 40 C37 36 33 32 30 25'
+    : 'M36 39 C33 35 29 34 25 32 C22 30 21 28 21 27';
+  const right = branched ? 'M40 40 C44 37 49 33 51 26'
+    : 'M37 39 C42 35 48 37 53 32 C56 29 58 27 58 25';
+  const middle = 'M40 41 C39 35 40 27 40 22';
+  const lowerBud = 'M41 39 C42 36 42 33 41 31';
+  const strokes = [stem,left,right,...(branched?[middle,lowerBud]:[])];
   const heads = branched
-    ? [[23,22,5.7,5.1,-16],[41,29,5.8,5.5,12],[59,23,6.2,5.4,23]]
-    : [[20,27,5.2,5.5,-20],[59,24,5.7,5.1,18],[38,40,4.1,4.5,-10]];
+    ? [[30,23,4.4,4.5,-14],[40,20,4.2,4.5,7],[51,24,4.7,4.3,18],[42,31,3.6,3.9,-12]]
+    : [[21,27,4.4,4.8,-20],[58,25,4.6,4.3,15]];
+  const strokeWidth = (index:number) => index === 0 ? (branched?6.9:6.3) : (branched?5.1:4.8);
   const silhouette = <g fill="none" strokeLinecap="round" strokeLinejoin="round">
-    {strokes.map((d,i)=><path key={i} d={d} stroke={paint.mid} strokeWidth={i===0?8.2:6.7}/>)}
+    {strokes.map((d,i)=><path key={i} d={d} stroke={paint.mid} strokeWidth={strokeWidth(i)}/>)}
     {heads.map(([cx,cy,rx,ry,angle],i)=><ellipse key={i} cx={cx} cy={cy} rx={rx} ry={ry}
       transform={`rotate(${angle} ${cx} ${cy})`} fill={paint.mid}/>)}
   </g>;
   return <g>
-    {/* Low-opacity bloom follows the complete shape rather than a large circle. */}
-    <g filter={`url(#bloom-${id})`} opacity=".32">{silhouette}</g>
-    <ellipse cx="40" cy="70" rx="6" ry="3" fill={paint.dark} fillOpacity=".45" filter={`url(#contact-${id})`}/>
+    <g filter={`url(#bloom-${id})`} opacity=".38">{silhouette}</g>
+    <ellipse cx="40" cy="70" rx="5.5" ry="2.7" fill={paint.dark} fillOpacity=".39" filter={`url(#contact-${id})`}/>
     <g fill="none" strokeLinecap="round" strokeLinejoin="round">
       {strokes.map((d,i)=><g key={i}>
-        <path d={d} stroke={paint.dark} strokeWidth={i===0?9:7.8} strokeOpacity=".68" transform="translate(.75 1.2)"/>
-        <path d={d} stroke={paint.shaft} strokeWidth={i===0?7.4:6.1}/>
+        <path d={d} stroke={paint.dark} strokeWidth={strokeWidth(i)+.9} strokeOpacity=".42" transform="translate(.4 .8)"/>
+        <path d={d} stroke={paint.shaft} strokeWidth={strokeWidth(i)}/>
       </g>)}
-      <path d={stem} stroke={paint.light} strokeWidth="1.05" strokeOpacity=".42" transform="translate(-1.7 -1)"/>
+      <path d={stem} stroke={paint.light} strokeWidth=".9" strokeOpacity=".35" transform="translate(-1.4 -.6)"/>
     </g>
     {heads.map(([cx,cy,rx,ry,angle],i)=><g key={i} transform={`rotate(${angle} ${cx} ${cy})`}>
-      <ellipse cx={cx+.5} cy={cy+.95} rx={rx} ry={ry+.15} fill={paint.dark} fillOpacity=".53"/>
+      <ellipse cx={cx+.4} cy={cy+.7} rx={rx} ry={ry+.1} fill={paint.dark} fillOpacity=".38"/>
       <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={paint.bead}/>
-      <path d={`M ${cx-rx*.78} ${cy+ry*.37} Q ${cx} ${cy+ry*1.02} ${cx+rx*.83} ${cy+ry*.28}`}
-        fill="none" stroke={paint.dark} strokeOpacity=".44" strokeWidth=".85"/>
-      <ellipse cx={cx-rx*.31} cy={cy-ry*.37} rx={rx*.44} ry={ry*.19} fill="#fff" fillOpacity=".57"
+      <path d={`M ${cx-rx*.73} ${cy+ry*.38} Q ${cx} ${cy+ry*.96} ${cx+rx*.8} ${cy+ry*.3}`}
+        fill="none" stroke={paint.dark} strokeOpacity=".31" strokeWidth=".6"/>
+      <ellipse cx={cx-rx*.3} cy={cy-ry*.38} rx={rx*.43} ry={ry*.22} fill="#fff" fillOpacity=".54"
         filter={`url(#specular-${id})`}/>
-      <path d={`M ${cx-rx*.72} ${cy-ry*.07} Q ${cx-rx*.42} ${cy-ry*.72} ${cx+rx*.13} ${cy-ry*.79}`}
-        fill="none" stroke="#fff" strokeOpacity=".24" strokeWidth=".65"/>
     </g>)}
   </g>;
 }

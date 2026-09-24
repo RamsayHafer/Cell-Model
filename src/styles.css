@@ -71,7 +71,7 @@
   border:1px solid #fffc;box-shadow:0 3px 10px color-mix(in srgb,var(--marker) 13%,transparent),0 0 12px color-mix(in srgb,var(--marker) 7%,transparent),inset 0 1px 2px #fff9;
   backdrop-filter:blur(3px)}
 .marker-label::before{content:"";position:absolute;inset:-5px}
-.marker-label--coral{background:linear-gradient(135deg,#fff2edec,#ffe0d5df)}
-.marker-label--purple{background:linear-gradient(135deg,#f9f0ffee,#e9dcf5df)}
+.marker-label--coral{background:linear-gradient(135deg,#ffe2d9ed,#ffc0b3e5)}
+.marker-label--purple{background:linear-gradient(135deg,#eee6faed,#dcd0f0e5)}
 .marker-label--gold{background:linear-gradient(135deg,#fff9ebed,#f9eacbde)}
 .marker-label--cyan{background:linear-gradient(135deg,#effbfeed,#dff2f6dd)}
