@@ -53,7 +53,7 @@ function ReferenceTrace({ variant, paint, id }: { variant:string; paint:Paint; i
   const receptor = variant === 'reference-cd30' || variant === 'reference-cd7';
   const stemStretch = variant === 'reference-cd30' ? 'translate(0 -28) scale(1 1.4)'
     : variant === 'reference-cd4' ? 'translate(0 -21) scale(1 1.3)' : undefined;
-  const softEdge = variant === 'reference-ki67' ? '.26px' : variant === 'reference-cd7' ? '.52px' : '.43px';
+  const softEdge = variant === 'reference-ki67' ? '.42px' : variant === 'reference-cd7' ? '.85px' : '.65px';
   return <g>
     {receptor && <ellipse cx="40" cy="39" rx="26" ry="28" fill={paint.glow} fillOpacity=".19"
       filter={`url(#bloom-${id})`}/>}
