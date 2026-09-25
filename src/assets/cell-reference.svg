@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 244 259" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
 <!-- Color paths traced from the user-supplied 244 × 259 reference. -->
-<defs><filter id="traceSoft" x="-2%" y="-2%" width="104%" height="104%"><feGaussianBlur stdDeviation=".32"/></filter></defs>
+<defs><filter id="traceSoft" x="-2%" y="-2%" width="104%" height="104%"><feGaussianBlur stdDeviation=".14"/></filter></defs>
 <g filter="url(#traceSoft)">
 <path fill="#fbf8f6" opacity="0.25" d="M126 83h1v1H126zM126 84h1v1H126zM110 86h1v1H110zM106 90h3v1H106zM121 90h2v1H121zM122 91h3v1H122zM205 126h1v1H205zM207 129h1v1H207zM214 149h1v1H214zM211 159h1v1H211zM209 177h1v1H209zM209 178h1v1H209zM205 187h1v1H205z"/>
 <path fill="#fbf8f6" opacity="0.50" d="M111 86h1v1H111z"/>
