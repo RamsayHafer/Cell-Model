@@ -28,14 +28,14 @@ def contour(points):
 
 
 outer = contour([
-    (116,72),(124,73),(132,69),(142,72),(152,74),(163,78),(173,79),
-    (183,88),(189,96),(199,105),(202,116),(207,126),(207,138),
-    (213,148),(209,158),(213,169),(207,182),(206,195),(199,207),
-    (198,219),(188,228),(181,237),(169,243),(155,249),(144,248),
-    (132,253),(121,249),(109,249),(100,243),(86,242),(77,235),
-    (68,226),(63,215),(55,207),(51,195),(50,181),(47,170),
-    (49,157),(48,146),(51,136),(52,123),(57,113),(63,103),
-    (71,94),(77,84),(87,81),(97,76),(108,77)
+    (113,73),(122,71),(132,69),(143,72),(151,73),(166,77),(175,82),
+    (181,89),(192,96),(197,108),(204,116),(204,128),(211,139),
+    (207,150),(213,161),(208,174),(212,184),(205,198),(201,211),
+    (192,217),(191,231),(179,238),(168,244),(159,245),(145,251),
+    (133,249),(123,252),(110,248),(99,243),(87,242),(76,233),
+    (71,223),(59,215),(54,203),(53,189),(47,179),(50,168),
+    (46,154),(51,143),(50,130),(57,118),(58,109),(67,99),
+    (73,88),(85,83),(93,78),(105,77)
 ])
 inner = contour([
     (117,90),(130,89),(142,89),(154,92),(164,96),(177,101),
@@ -51,79 +51,88 @@ core = contour([
     (149,220),(131,225),(113,223),(96,218),(84,208),(75,196),
     (69,178),(69,163),(72,145),(79,131),(88,119),(99,109)
 ])
-nucleus = ('M97 145 C102 138 109 136 116 134 C124 131 124 125 135 123 '
+nucleus = ('M97 145 C102 138 110 140 117 135 C125 131 124 125 135 123 '
            'C145 121 155 125 161 132 C171 137 173 151 174 161 '
            'C175 172 170 181 168 189 C165 198 157 202 150 204 '
            'C143 204 139 211 130 212 C117 214 103 209 95 202 '
            'C88 195 84 183 86 173 C86 162 90 153 97 145Z')
 
-def petal(rng, cx, cy, rx, ry, angle, color, opacity):
-    # Each fold has an independent irregular contour, broad colored underside,
-    # and short interior glint. No pixel-color posterization or tiled pattern.
-    d = ('M -1 -.70 C -.73 -1.16 -.12 -1.16 .14 -.98 '
-         'C .54 -1.11 1.05 -.54 .90 -.15 '
-         'C 1.14 .27 .61 .96 .09 1.03 '
-         'C -.52 1.14 -.58 .65 -1.01 .35 '
-         'C -1.16 .01 -1.13 -.33 -1 -.70Z')
-    angle += rng.uniform(-12,12)
+FOLD_SHAPES = [
+    ('M-.93 -.41 C-.95 -.83 -.46 -1.08 -.07 -.99 '
+     'C.31 -1.13 .91 -.67 .95 -.18 C1.10 .22 .80 .84 .29 .96 '
+     'C-.23 1.11 -.86 .75 -.99 .25 C-1.10 -.06 -.95 -.21 -.93 -.41Z'),
+    ('M-.98 -.20 C-1.10 -.58 -.58 -1.03 -.22 -.91 '
+     'C.16 -1.21 .78 -.73 .84 -.32 C1.19 .03 .90 .55 .35 .89 '
+     'C-.14 1.16 -.51 .72 -.91 .47 C-1.09 .29 -1.12 .01 -.98 -.20Z'),
+    ('M-.93 -.51 C-.67 -.88 -.52 -.77 -.20 -1.00 '
+     'C.35 -1.10 .60 -.79 .84 -.49 C1.19 -.08 .94 .29 .73 .56 '
+     'C.51 1.01 -.16 1.09 -.49 .76 C-1.01 .66 -1.15 -.10 -.93 -.51Z'),
+    ('M-1 -.29 C-.93 -.90 -.43 -.81 -.15 -.98 '
+     'C.17 -1.09 .41 -.84 .62 -.69 C1.12 -.49 1.10 .31 .75 .65 '
+     'C.51 1.03 -.22 1.02 -.58 .67 C-.95 .50 -1.16 .11 -1 -.29Z'),
+]
+
+
+def fold(rng, cx, cy, rx, ry, angle, color, opacity):
+    """One of four rounded, uneven fold contours; no repeated hard highlight."""
+    d = rng.choice(FOLD_SHAPES)
+    angle += rng.uniform(-27,27)
     return (f'<g transform="translate({cx:.2f} {cy:.2f}) rotate({angle:.1f}) '
             f'scale({rx:.2f} {ry:.2f})" opacity="{opacity:.2f}">'
-            f'<path d="{d}" fill="#8a82bf" opacity=".11" '
-            'transform="translate(.11 .17)"/>'
             f'<path d="{d}" fill="url(#{color})"/>'
             '</g>')
 
 
 DEFS = '''<defs>
   <radialGradient id="body" cx="41%" cy="37%" r="77%">
-    <stop stop-color="#f8faff"/><stop offset=".24" stop-color="#e1f0ff"/>
-    <stop offset=".58" stop-color="#d7e4fc"/><stop offset=".83" stop-color="#d1c8f3"/>
+    <stop stop-color="#f9f9ff"/><stop offset=".24" stop-color="#e6edfc"/>
+    <stop offset=".58" stop-color="#d7e2f7"/><stop offset=".83" stop-color="#d4c9f2"/>
     <stop offset="1" stop-color="#bab2e2"/>
   </radialGradient>
   <radialGradient id="cortex" cx="43%" cy="34%" r="69%">
-    <stop stop-color="#f4f9ff" stop-opacity=".95"/>
-    <stop offset=".44" stop-color="#cfebfc" stop-opacity=".83"/>
-    <stop offset=".76" stop-color="#b8d8f0" stop-opacity=".57"/>
-    <stop offset="1" stop-color="#bcb6e7" stop-opacity=".31"/>
+    <stop stop-color="#f2f4ff" stop-opacity=".81"/>
+    <stop offset=".44" stop-color="#d5e5fa" stop-opacity=".69"/>
+    <stop offset=".76" stop-color="#c2d3ef" stop-opacity=".44"/>
+    <stop offset="1" stop-color="#c5bce9" stop-opacity=".15"/>
   </radialGradient>
   <radialGradient id="innerLight" cx="38%" cy="30%" r="77%">
-    <stop stop-color="#e4f4ff" stop-opacity=".76"/>
-    <stop offset=".57" stop-color="#c5dff6" stop-opacity=".58"/>
-    <stop offset="1" stop-color="#b0c1e9" stop-opacity=".24"/>
+    <stop stop-color="#e8edff" stop-opacity=".56"/>
+    <stop offset=".57" stop-color="#cad7f3" stop-opacity=".42"/>
+    <stop offset="1" stop-color="#b5bfea" stop-opacity=".12"/>
   </radialGradient>
   <radialGradient id="foldLav" cx="34%" cy="26%" r="78%">
-    <stop stop-color="#fff" stop-opacity=".98"/>
-    <stop offset=".30" stop-color="#f8f0ff" stop-opacity=".96"/>
-    <stop offset=".68" stop-color="#d9c9f8" stop-opacity=".87"/>
-    <stop offset="1" stop-color="#a99bd7" stop-opacity=".16"/>
+    <stop stop-color="#fff" stop-opacity=".89"/>
+    <stop offset=".28" stop-color="#f8f0ff" stop-opacity=".70"/>
+    <stop offset=".62" stop-color="#d9c9f8" stop-opacity=".36"/>
+    <stop offset="1" stop-color="#a99bd7" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="foldBlue" cx="30%" cy="24%" r="84%">
-    <stop stop-color="#fff" stop-opacity=".98"/>
-    <stop offset=".31" stop-color="#eaf9ff" stop-opacity=".96"/>
-    <stop offset=".73" stop-color="#b7d8f4" stop-opacity=".89"/>
-    <stop offset="1" stop-color="#89a4d6" stop-opacity=".16"/>
+    <stop stop-color="#fff" stop-opacity=".88"/>
+    <stop offset=".32" stop-color="#e8f1ff" stop-opacity=".72"/>
+    <stop offset=".68" stop-color="#b7d1f1" stop-opacity=".36"/>
+    <stop offset="1" stop-color="#899fdb" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="foldPink" cx="34%" cy="25%" r="82%">
-    <stop stop-color="#fff9ff" stop-opacity=".96"/>
-    <stop offset=".34" stop-color="#f3dff8" stop-opacity=".8"/>
-    <stop offset=".75" stop-color="#dac0ed" stop-opacity=".62"/>
-    <stop offset="1" stop-color="#bc99df" stop-opacity=".11"/>
+    <stop stop-color="#fff9ff" stop-opacity=".86"/>
+    <stop offset=".34" stop-color="#f3dff8" stop-opacity=".70"/>
+    <stop offset=".70" stop-color="#dac0ed" stop-opacity=".32"/>
+    <stop offset="1" stop-color="#bc99df" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="nucleus" cx="29%" cy="21%" r="84%">
-    <stop stop-color="#e3d1f7"/><stop offset=".23" stop-color="#b8a1dc"/>
-    <stop offset=".58" stop-color="#947fc8"/>
-    <stop offset=".89" stop-color="#7567b3"/>
-    <stop offset="1" stop-color="#645b9e"/>
+    <stop stop-color="#c8b5e7"/><stop offset=".23" stop-color="#af9cda"/>
+    <stop offset=".58" stop-color="#8c78c0"/>
+    <stop offset=".89" stop-color="#7261af"/>
+    <stop offset="1" stop-color="#665aa4"/>
   </radialGradient>
-  <linearGradient id="nucleusSheen" x1="0" y1="0" x2=".86" y2="1">
-    <stop stop-color="#f8f1ff" stop-opacity=".76"/>
-    <stop offset=".47" stop-color="#e3d2f9" stop-opacity=".23"/>
-    <stop offset="1" stop-color="#5f4a9a" stop-opacity=".22"/>
-  </linearGradient>
-  <radialGradient id="nuclearPearl" cx="25%" cy="20%" r="78%">
-    <stop stop-color="#f6eaff" stop-opacity=".85"/>
-    <stop offset=".39" stop-color="#dfcef9" stop-opacity=".56"/>
-    <stop offset="1" stop-color="#7866b4" stop-opacity=".04"/>
+  <radialGradient id="nuclearMist">
+    <stop stop-color="#e7d7f7" stop-opacity=".58"/>
+    <stop offset=".52" stop-color="#c7b6e7" stop-opacity=".25"/>
+    <stop offset="1" stop-color="#ab99d8" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="nuclearLav">
+    <stop stop-color="#c9b5e9" stop-opacity=".49"/>
+    <stop offset=".60" stop-color="#ab94d3" stop-opacity=".19"/>
+    <stop offset="1" stop-color="#ab94d3" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="cloudBlue">
     <stop stop-color="#7caadf" stop-opacity=".42"/>
@@ -141,8 +150,8 @@ DEFS = '''<defs>
     <stop offset="1" stop-color="#fff" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="nuclearShade">
-    <stop stop-color="#504492" stop-opacity=".42"/>
-    <stop offset=".56" stop-color="#61529b" stop-opacity=".20"/>
+    <stop stop-color="#594995" stop-opacity=".32"/>
+    <stop offset=".56" stop-color="#6a56a3" stop-opacity=".14"/>
     <stop offset="1" stop-color="#7562ae" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="mint" cx="46%" cy="37%" r="66%">
@@ -182,30 +191,33 @@ def draw(with_mint):
             '<path d="M187 86 C206 104 211 140 209 171 C199 164 202 129 181 111Z" '
             'fill="#edbfe7" opacity=".20"/>']
 
-    # Two interlaced belts of translucent, uneven membrane folds. Their
-    # overlaps form the luminous ruffled rim seen in the reference.
-    for belt, number, distance, rx, ry in [(0,54,.91,9.0,10.6),(1,45,.74,10.2,12.0)]:
-        for i in range(number):
-            t = -pi/2 + 2*pi*(i + (.29 if belt else 0))/number
-            t += rng.uniform(-.12,.12)
-            radial = distance + rng.uniform(-.12,.10)
-            x = 130 + 79*cos(t)*radial
-            y = 161 + 88*sin(t)*radial
-            x += rng.uniform(-3.9,3.9); y += rng.uniform(-4.6,4.6)
-            color = ('foldPink' if i%11 in (0,1) and t < -.15 else
-                     'foldLav' if (i+belt)%3 else 'foldBlue')
-            bits.append(petal(rng,x,y,rx*rng.uniform(.60,1.40),
-                              ry*rng.uniform(.63,1.44),t*180/pi+96,
-                              color,rng.uniform(.45,.83)))
+    # Membrane is a set of irregular *clusters*, not an evenly spaced ring.
+    # Each anchor describes a hand-chosen pocket of lobes. Soft alpha gradients
+    # let neighboring folds merge without faceted or crystalline seams.
+    anchors = [
+        (-94,.97,5),(-86,.83,3),(-78,1.00,5),(-66,.85,4),(-55,.93,6),
+        (-41,.88,3),(-32,1.00,5),(-21,.87,4),(-9,.93,6),(5,.82,3),
+        (18,1.00,4),(31,.89,5),(47,.96,6),(63,.83,4),(77,.94,5),
+        (89,1.00,4),(106,.85,6),(119,.95,4),(136,.99,6),
+        (148,.82,3),(162,.94,6),(177,.91,4),(193,.99,5),
+        (209,.81,4),(226,.92,5),(241,1.00,4),(258,.84,5),
+    ]
+    for index,(degrees,distance,count) in enumerate(anchors):
+        t = degrees*pi/180
+        anchor_x = 130+79*cos(t)*distance
+        anchor_y = 161+89*sin(t)*distance
+        for j in range(count):
+            x = anchor_x+rng.uniform(-8.5,8.5)
+            y = anchor_y+rng.uniform(-8.0,8.0)
+            color = ('foldPink' if index in (2,3,4,7,8) and j%2 else
+                     'foldBlue' if (index*3+j)%5 in (0,2) else 'foldLav')
+            bits.append(fold(rng,x,y,rng.uniform(4.0,10.5),
+                             rng.uniform(4.8,12.3),degrees+100,
+                             color,rng.uniform(.43,.82)))
 
     bits.extend([
-        f'<path d="{inner}" fill="url(#cortex)" stroke="#f7f1ff" '
-        'stroke-opacity=".18" stroke-width=".9"/>',
+        f'<path d="{inner}" fill="url(#cortex)"/>',
         f'<path d="{core}" fill="url(#innerLight)"/>',
-        '<path d="M66 149 C74 115 87 106 112 96 C137 89 162 103 179 118" '
-        'fill="none" stroke="#fff" stroke-width="7.7" stroke-opacity=".19" stroke-linecap="round"/>',
-        '<path d="M69 184 C73 216 106 233 133 231 C170 229 183 212 194 182" '
-        'fill="none" stroke="#f6f2ff" stroke-width="9.4" stroke-opacity=".18" stroke-linecap="round"/>',
     ])
 
     # Interior folds have independent geometry rather than a repeated tile.
@@ -222,32 +234,23 @@ def draw(with_mint):
         (110,204,8,8,-12),(90,187,7,11,35),(82,166,7,10,-20),
         (96,144,8,9,42),(114,129,7,9,18),(141,130,7,8,-38),
     ]):
-        bits.append(petal(rng,x,y,sx,sy,turn,
-                          'foldBlue' if i%3 else 'foldLav',
-                          .56 if i%4 else .67))
+        bits.append(fold(rng,x+rng.uniform(-3.3,3.3),y+rng.uniform(-3.8,3.8),
+                         sx*rng.uniform(.70,1.31),sy*rng.uniform(.74,1.35),
+                         turn,'foldBlue' if i%4 else 'foldLav',
+                         rng.uniform(.32,.67)))
 
-    # Sweeping creases break up the individual folds. The second, offset stroke
-    # supplies their darker underside while the wide white stroke stays soft.
+    # A few broad, translucent whorls hint at connective folds. They do not
+    # outline the concentric layers or repeat around the perimeter.
     creases = [
-        ('M73 130 C84 110 95 111 105 101 C119 92 127 109 139 104',8),
-        ('M101 113 C116 107 127 114 137 105 C149 100 155 114 169 114',6),
-        ('M163 120 C176 119 177 133 185 138 C191 148 183 157 190 163',8),
-        ('M186 174 C176 181 181 193 169 199 C163 212 150 211 143 219',9),
-        ('M134 226 C124 217 111 227 102 214 C91 211 82 208 78 196',8),
-        ('M61 182 C73 175 65 162 76 153 C75 141 86 137 86 127',8),
-        ('M82 163 C90 147 104 148 110 133 C122 122 132 133 139 121',6),
-        ('M154 133 C172 139 166 147 179 155 C183 169 172 178 173 188',8),
-        ('M72 199 C81 189 95 196 101 185 C107 173 119 175 126 166',6),
-        ('M159 203 C144 198 146 209 133 208 C120 206 119 216 109 219',6),
-        ('M104 98 C111 91 122 96 132 91 C139 86 146 94 154 94',7),
-        ('M67 144 C78 134 74 124 84 116 C92 111 98 115 105 108',7),
+        ('M76 132 C89 112 100 118 112 105 C121 100 131 108 138 103',11),
+        ('M169 122 C184 131 174 147 186 157',8),
+        ('M73 195 C81 205 95 206 100 217',10),
+        ('M159 209 C172 198 175 196 180 186',9),
+        ('M62 164 C69 152 69 141 79 132',8),
     ]
     for i,(d,width) in enumerate(creases):
-        bits.append(f'<path d="{d}" fill="none" stroke="#8f9dc8" '
-                    f'stroke-width="{width+1}" stroke-opacity=".10" '
-                    'stroke-linecap="round" transform="translate(.5 1.5)"/>')
         bits.append(f'<path d="{d}" fill="none" stroke="{("#fff" if i%3 else "#e7dcff")}" '
-                    f'stroke-width="{width}" stroke-opacity=".21" '
+                    f'stroke-width="{width}" stroke-opacity=".095" '
                     'stroke-linecap="round"/>')
 
     # Uneven fields of color and scattered pearly lights fill gaps between
@@ -272,73 +275,47 @@ def draw(with_mint):
 
     # Boundary glow is a fine uneven contour, not a blur over the cell.
     bits.extend([
-        f'<path d="{outer}" fill="none" stroke="#fff" stroke-width="1.25" '
-        'stroke-opacity=".34"/>',
+        f'<path d="{outer}" fill="none" stroke="#fff" stroke-width="1.1" '
+        'stroke-opacity=".24"/>',
         '<path d="M66 149 C65 118 91 91 122 85 C148 79 174 94 188 112" '
-        'fill="none" stroke="#fff" stroke-opacity=".23" stroke-width="1.35" '
+        'fill="none" stroke="#fff" stroke-opacity=".13" stroke-width="1.45" '
         'stroke-linecap="round"/>',
         '<path d="M52 174 C52 210 88 244 129 246" fill="none" '
-        'stroke="#f7f3ff" stroke-opacity=".29" stroke-width="1.4" '
+        'stroke="#f7f3ff" stroke-opacity=".16" stroke-width="1.4" '
         'stroke-linecap="round"/>',
         '</g>',
-        # Nucleus: one sculpted contour, translucent rim, organelle texture.
-        f'<path d="{nucleus}" fill="#9684c8" opacity=".17" '
-        'transform="translate(1.2 1.6)" filter="url(#contact)"/>',
-        f'<path d="{nucleus}" fill="url(#nucleus)" stroke="#9c88c8" '
-        'stroke-width="1.25" stroke-opacity=".46"/>',
+        # Soft nested edges give the nucleus an irregular, translucent
+        # boundary without blurring the SVG silhouette.
+        f'<path d="{nucleus}" fill="none" stroke="#917ebf" '
+        'stroke-width="6" stroke-opacity=".09"/>',
+        f'<path d="{nucleus}" fill="none" stroke="#b9a6dc" '
+        'stroke-width="3.2" stroke-opacity=".16"/>',
+        f'<path d="{nucleus}" fill="url(#nucleus)" opacity=".93"/>',
         f'<g clip-path="url(#nucleusClip)">',
-        '<path d="M84 176 C89 131 120 120 150 124 C171 125 185 145 177 170 '
-        'C163 144 152 129 132 135 C108 142 105 157 93 179Z" '
-        'fill="url(#nucleusSheen)" opacity=".64"/>',
-        '<path d="M86 184 C96 202 121 216 142 211 C160 209 177 185 175 161 '
-        'C166 181 153 192 138 190 C116 186 105 169 86 184Z" '
-        'fill="#584e9a" opacity=".15"/>',
     ])
 
-    for x,y,rx,ry in [(117,152,16,12),(151,150,13,11),(126,179,19,13),
-                       (161,181,12,13),(108,191,14,14),(145,199,14,9)]:
+    # Layering low-contrast, fading fields gives the nucleus mottled texture.
+    # None of these patches has a visible edge or glossy pearl highlight.
+    nuclear_fields = [
+        (112,142,19,13,'nuclearMist',.70),(141,135,18,11,'nuclearLav',.70),
+        (155,144,13,12,'nuclearShade',.61),(104,155,12,15,'nuclearLav',.56),
+        (126,153,17,11,'nuclearMist',.48),(145,153,13,9,'nuclearShade',.62),
+        (162,159,11,14,'nuclearMist',.48),(99,173,12,17,'nuclearShade',.53),
+        (116,169,16,13,'nuclearMist',.54),(139,172,13,14,'nuclearShade',.62),
+        (156,178,14,13,'nuclearLav',.66),(109,189,17,15,'nuclearLav',.51),
+        (126,185,18,15,'nuclearShade',.60),(147,188,14,9,'nuclearMist',.50),
+        (130,201,17,11,'nuclearMist',.41),(161,194,9,10,'nuclearShade',.55),
+        (95,190,11,11,'nuclearMist',.46),(122,134,13,8,'nuclearShade',.43),
+        (164,171,7,10,'nuclearShade',.55),(146,205,10,8,'nuclearLav',.48),
+        (115,203,10,8,'nuclearShade',.48),(136,146,12,6,'nuclearLav',.49),
+        (105,146,8,9,'nuclearMist',.43),(150,132,10,6,'nuclearMist',.38),
+    ]
+    for i,(x,y,rx,ry,shade,opacity) in enumerate(nuclear_fields):
         bits.append(f'<ellipse cx="{x}" cy="{y}" rx="{rx}" ry="{ry}" '
-                    'fill="url(#nuclearShade)"/>')
-
-    for i,(x,y,rx,ry,alpha) in enumerate([
-        (118,145,10,5,.52),(145,137,12,6,.48),(158,147,9,8,.39),
-        (112,164,9,7,.50),(129,154,12,6,.37),(147,165,10,8,.45),
-        (162,179,11,7,.41),(121,185,11,8,.38),(102,191,10,7,.39),
-        (137,197,11,8,.32),(106,151,5,7,.38),(140,179,8,7,.44),
-        (119,205,8,6,.30),(154,196,9,7,.35),(127,135,9,4,.49),
-        (96,173,5,11,.27),(154,126,6,5,.35),(170,164,5,8,.32),
-        (133,175,8,6,.31),(109,201,7,6,.29),(132,209,9,5,.23)
-    ]):
-        bits.append(f'<path d="M-.85 -.63 C-.42 -1.09 .06 -.83 .42 -.93 '
-                    'C 1.08 -.62 1.12 .18 .64 .70 '
-                    'C .11 1.03 -.48 .89 -.91 .45 C-1.12 .09 -1.12 -.27 -.85 -.63Z" '
-                    f'fill="url(#nuclearPearl)" opacity="{min(1,alpha/.63):.2f}" '
-                    f'transform="translate({x} {y}) rotate({(i*19)%87-43}) '
-                    f'scale({rx} {ry})"/>')
-
-    # Short interrupted color swirls give the nucleus depth without forming
-    # long parallel bands across its surface.
-    for d,w in [
-        ('M106 142 C110 136 114 138 118 134',5),
-        ('M139 133 C145 131 151 133 157 138',5),
-        ('M101 165 C108 158 111 165 117 161',7),
-        ('M131 160 C139 154 143 162 149 157',6),
-        ('M154 176 C159 169 164 171 168 174',5),
-        ('M97 189 C104 184 111 190 117 186',6),
-        ('M121 198 C126 194 133 199 139 194',6),
-        ('M143 183 C147 178 151 184 157 181',5),
-    ]:
-        bits.append(f'<path d="{d}" fill="none" stroke="#e8d5fb" '
-                    f'stroke-width="{w}" stroke-opacity=".20" '
-                    'stroke-linecap="round"/>')
+                    f'fill="url(#{shade})" opacity="{opacity:.2f}" '
+                    f'transform="rotate({(i*47)%119-59} {x} {y})"/>')
 
     bits.extend([
-        '<path d="M96 151 C100 136 117 128 131 125 C146 121 161 131 167 141" '
-        'fill="none" stroke="#f3e4ff" stroke-opacity=".24" '
-        'stroke-width="1.8" stroke-linecap="round"/>',
-        '<path d="M87 181 C87 197 101 210 119 212" fill="none" '
-        'stroke="#bca7e4" stroke-opacity=".38" stroke-width="2.1" '
-        'stroke-linecap="round"/>',
         '</g>',
     ])
     if with_mint:
