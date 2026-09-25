@@ -60,17 +60,15 @@ nucleus = ('M101 139 C106 133 111 128 122 126 C131 120 144 121 153 124 '
 def petal(rng, cx, cy, rx, ry, angle, color, opacity):
     # Each fold has an independent irregular contour, broad colored underside,
     # and short interior glint. No pixel-color posterization or tiled pattern.
-    d = ('M -1 -.94 C .34 -1.13 .82 -.72 .96 -.19 '
-         'C 1.14 .22 .73 .81 .16 1.00 '
-         'C -.31 1.10 -.89 .72 -1.02 .23 '
-         'C -1.18 -.21 -.89 -.66 -1 -.94Z')
+    d = ('M -1 -.70 C -.73 -1.16 -.12 -1.16 .14 -.98 '
+         'C .54 -1.11 1.05 -.54 .90 -.15 '
+         'C 1.14 .27 .61 .96 .09 1.03 '
+         'C -.52 1.14 -.58 .65 -1.01 .35 '
+         'C -1.16 .01 -1.13 -.33 -1 -.70Z')
     angle += rng.uniform(-12,12)
     return (f'<g transform="translate({cx:.2f} {cy:.2f}) rotate({angle:.1f}) '
             f'scale({rx:.2f} {ry:.2f})" opacity="{opacity:.2f}">'
             f'<path d="{d}" fill="url(#{color})"/>'
-            '<path d="M-.74 -.3 C-.55 -.80 -.13 -.85 .31 -.67" '
-            'fill="none" stroke="#fff" stroke-opacity=".24" '
-            'stroke-width=".14" stroke-linecap="round"/>'
             '</g>')
 
 
@@ -164,19 +162,19 @@ def draw(with_mint):
 
     # Two interlaced belts of translucent, uneven membrane folds. Their
     # overlaps form the luminous ruffled rim seen in the reference.
-    for belt, number, distance, rx, ry in [(0,51,.91,9.8,11.8),(1,46,.75,10.5,12.7)]:
+    for belt, number, distance, rx, ry in [(0,54,.91,9.0,10.6),(1,45,.74,10.2,12.0)]:
         for i in range(number):
             t = -pi/2 + 2*pi*(i + (.29 if belt else 0))/number
-            t += rng.uniform(-.038,.038)
-            radial = distance + rng.uniform(-.065,.065)
+            t += rng.uniform(-.12,.12)
+            radial = distance + rng.uniform(-.12,.10)
             x = 130 + 79*cos(t)*radial
             y = 161 + 88*sin(t)*radial
-            x += rng.uniform(-3.1,3.1); y += rng.uniform(-3.0,3.0)
+            x += rng.uniform(-3.9,3.9); y += rng.uniform(-4.6,4.6)
             color = ('foldPink' if i%11 in (0,1) and t < -.15 else
                      'foldLav' if (i+belt)%3 else 'foldBlue')
-            bits.append(petal(rng,x,y,rx*rng.uniform(.63,1.37),
-                              ry*rng.uniform(.61,1.38),t*180/pi+96,
-                              color,rng.uniform(.49,.82)))
+            bits.append(petal(rng,x,y,rx*rng.uniform(.60,1.40),
+                              ry*rng.uniform(.63,1.44),t*180/pi+96,
+                              color,rng.uniform(.45,.83)))
 
     bits.extend([
         f'<path d="{inner}" fill="url(#cortex)" stroke="#f7f1ff" '
@@ -264,22 +262,27 @@ def draw(with_mint):
         (96,173,5,11,.27),(154,126,6,5,.35),(170,164,5,8,.32),
         (133,175,8,6,.31),(109,201,7,6,.29),(132,209,9,5,.23)
     ]):
-        bits.append(f'<ellipse cx="{x}" cy="{y}" rx="{rx}" ry="{ry}" '
-                    f'fill="url(#nuclearPearl)" opacity="{min(1,alpha/.65):.2f}" '
-                    f'transform="rotate({(i*19)%61-30} {x} {y})"/>')
+        bits.append(f'<path d="M-.85 -.63 C-.42 -1.09 .06 -.83 .42 -.93 '
+                    'C 1.08 -.62 1.12 .18 .64 .70 '
+                    'C .11 1.03 -.48 .89 -.91 .45 C-1.12 .09 -1.12 -.27 -.85 -.63Z" '
+                    f'fill="url(#nuclearPearl)" opacity="{min(1,alpha/.63):.2f}" '
+                    f'transform="translate({x} {y}) rotate({(i*19)%87-43}) '
+                    f'scale({rx} {ry})"/>')
 
+    # Short interrupted color swirls give the nucleus depth without forming
+    # long parallel bands across its surface.
     for d,w in [
-        ('M97 150 C108 128 120 135 132 126 C143 123 150 128 156 136',7),
-        ('M102 169 C111 156 124 160 130 146 C143 141 147 153 158 151',10),
-        ('M92 182 C105 171 115 183 127 173 C137 166 149 175 161 166',11),
-        ('M96 197 C109 186 122 195 133 184 C146 181 153 187 166 179',10),
-        ('M106 207 C118 200 128 208 141 196 C150 197 157 194 161 189',8),
+        ('M106 142 C110 136 114 138 118 134',5),
+        ('M139 133 C145 131 151 133 157 138',5),
+        ('M101 165 C108 158 111 165 117 161',7),
+        ('M131 160 C139 154 143 162 149 157',6),
+        ('M154 176 C159 169 164 171 168 174',5),
+        ('M97 189 C104 184 111 190 117 186',6),
+        ('M121 198 C126 194 133 199 139 194',6),
+        ('M143 183 C147 178 151 184 157 181',5),
     ]:
-        bits.append(f'<path d="{d}" fill="none" stroke="#53468f" '
-                    f'stroke-width="{w+2}" stroke-opacity=".12" '
-                    'stroke-linecap="round" transform="translate(1 2)"/>')
-        bits.append(f'<path d="{d}" fill="none" stroke="#e1d1f6" '
-                    f'stroke-width="{w}" stroke-opacity=".17" '
+        bits.append(f'<path d="{d}" fill="none" stroke="#e8d5fb" '
+                    f'stroke-width="{w}" stroke-opacity=".20" '
                     'stroke-linecap="round"/>')
 
     bits.extend([
