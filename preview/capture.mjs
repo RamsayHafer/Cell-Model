@@ -26,14 +26,7 @@ await page.locator('.cell-composition').screenshot({path:'preview/browser-refere
 // QA-only comparison. The shipped app continues to use the new vector art;
 // swap the old SVG into this browser session to capture the same markers,
 // placement and viewport against the approved traced cell.
-await page.setViewportSize({width:1200,height:1200});
-await page.locator('.cell-composition').evaluate(el => {
-  el.style.transform = 'scale(2)';
-  el.style.transformOrigin = 'top left';
-});
-await page.locator('.cell-composition').screenshot({path:'preview/browser-vector-reference-2x.png'});
-await page.setViewportSize({width:390,height:844});
-await page.locator('.cell-composition').evaluate(el => { el.style.transform = ''; });
+const vectorMarkup = await page.locator('.inline-art').innerHTML();
 await page.locator('.inline-art').evaluate(async el => {
   const response = await fetch('/src/assets/cell-reference.svg');
   if (!response.ok) throw new Error('Could not load approved traced reference');
@@ -41,10 +34,20 @@ await page.locator('.inline-art').evaluate(async el => {
 });
 await page.screenshot({path:'preview/browser-trace-reference-mobile.png'});
 await page.locator('.cell-composition').screenshot({path:'preview/browser-trace-reference-cell.png'});
+// Move the composition alone onto an opaque inspection board. Scaling the
+// original stage would crop the right half and reveal UI behind the drawing.
 await page.setViewportSize({width:1200,height:1200});
 await page.locator('.cell-composition').evaluate(el => {
+  const board = document.createElement('div');
+  board.className = 'reference-scene';
+  Object.assign(board.style, {position:'fixed',inset:'0',zIndex:'10000',background:'#fffcfa'});
+  document.body.appendChild(board);
+  board.appendChild(el);
+  Object.assign(el.style, {position:'absolute',top:'0',left:'0',width:'378px',height:'378px'});
   el.style.transform = 'scale(2)';
   el.style.transformOrigin = 'top left';
 });
 await page.locator('.cell-composition').screenshot({path:'preview/browser-trace-reference-2x.png'});
+await page.locator('.inline-art').evaluate((el,markup) => {el.innerHTML=markup;},vectorMarkup);
+await page.locator('.cell-composition').screenshot({path:'preview/browser-vector-reference-2x.png'});
 await browser.close();
