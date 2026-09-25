@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import { referenceTraces } from './referenceTraces';
 import type { MarkerPalette, MarkerVisualSpec, VisualFamily } from './types';
 
 type Paint = { light: string; mid: string; dark: string; glow: string; shaft: string; bead: string };
@@ -46,82 +47,14 @@ function SurfaceReceptor({ family, variant, paint }: { family:VisualFamily; vari
   </g>;
 }
 
-// Hand-tuned silhouettes for the illustration study. All geometry is selected
-// by visualVariant; the portable renderer never reads a marker name to paint.
-function ReferenceReceptor({ variant, paint, id }: { variant:'reference-cd30'|'reference-cd7'; paint:Paint; id:string }) {
-  const branched = variant === 'reference-cd30';
-  // Compact, uneven tip clusters and tapered curves keep the receptors
-  // integrated with the illustrated membrane at mobile size.
-  const stem = branched ? 'M40 72 C40 62 40 54 42 47 C44 42 41 40 40 39'
-    : 'M41 70 C43 59 40 52 40 46 C39 42 37 40 36 38';
-  const left = branched ? 'M40 40 C37 32 32 28 26 15'
-    : 'M36 39 C33 35 29 34 25 32 C22 30 21 28 21 27';
-  const right = branched ? 'M40 40 C45 32 53 29 58 17'
-    : 'M37 39 C42 35 48 37 53 32 C56 29 58 27 58 25';
-  const middle = 'M40 41 C40 31 40 22 40 12';
-  const lowerBud = 'M41 39 C42 36 44 30 44 27';
-  const strokes = [stem,left,right,...(branched?[middle,lowerBud]:[])];
-  const heads = branched
-    ? [[26,14,5.2,5.3,-14],[40,11,5.0,5.2,7],[58,16,5.3,5.0,18],[44,27,4.2,4.4,-12]]
-    : [[21,27,5.0,5.2,-20],[58,25,5.1,4.8,15]];
-  const strokeWidth = (index:number) => index === 0 ? (branched?6.9:6.5) : (branched?5.4:5.3);
-  const silhouette = <g fill="none" strokeLinecap="round" strokeLinejoin="round">
-    {strokes.map((d,i)=><path key={i} d={d} stroke={paint.mid} strokeWidth={strokeWidth(i)}/>)}
-    {heads.map(([cx,cy,rx,ry,angle],i)=><ellipse key={i} cx={cx} cy={cy} rx={rx} ry={ry}
-      transform={`rotate(${angle} ${cx} ${cy})`} fill={paint.mid}/>)}
-  </g>;
+// Reference variants are independently traced SVG color paths. The family and
+// variant select a silhouette; patient state and marker names never do.
+function ReferenceTrace({ variant, paint, id }: { variant:string; paint:Paint; id:string }) {
+  const receptor = variant === 'reference-cd30' || variant === 'reference-cd7';
   return <g>
-    <ellipse cx={branched?42:40} cy={branched?31:35} rx={branched?28:24} ry={branched?26:25}
-      fill={paint.glow} fillOpacity={branched?'.14':'.09'} filter={`url(#bloom-${id})`}/>
-    <g filter={`url(#bloom-${id})`} opacity=".38">{silhouette}</g>
-    <ellipse cx="40" cy="70" rx="5.5" ry="2.7" fill={paint.dark} fillOpacity=".39" filter={`url(#contact-${id})`}/>
-    <g fill="none" strokeLinecap="round" strokeLinejoin="round">
-      {strokes.map((d,i)=><g key={i}>
-        <path d={d} stroke={paint.dark} strokeWidth={strokeWidth(i)+.9} strokeOpacity=".42" transform="translate(.4 .8)"/>
-        <path d={d} stroke={paint.shaft} strokeWidth={strokeWidth(i)}/>
-      </g>)}
-      <path d={stem} stroke={paint.light} strokeWidth=".9" strokeOpacity=".35" transform="translate(-1.4 -.6)"/>
-    </g>
-    {heads.map(([cx,cy,rx,ry,angle],i)=><g key={i} transform={`rotate(${angle} ${cx} ${cy})`}>
-      <ellipse cx={cx+.4} cy={cy+.7} rx={rx} ry={ry+.1} fill={paint.dark} fillOpacity=".38"/>
-      <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={`url(#reference-bead-${id})`}/>
-      <path d={`M ${cx-rx*.73} ${cy+ry*.38} Q ${cx} ${cy+ry*.96} ${cx+rx*.8} ${cy+ry*.3}`}
-        fill="none" stroke={paint.dark} strokeOpacity=".31" strokeWidth=".6"/>
-      <ellipse cx={cx-rx*.3} cy={cy-ry*.38} rx={rx*.43} ry={ry*.22} fill="#fff" fillOpacity=".38"
-        filter={`url(#specular-${id})`}/>
-    </g>)}
-  </g>;
-}
-
-// The other two accents in the supplied study reuse palette and state handling.
-// They are visual variants, so neither the renderer nor the app layout tests a
-// biological marker name to choose a silhouette.
-function ReferenceBlue({ paint, id }: { paint:Paint; id:string }) {
-  const stem = 'M40 70 C39 57 37 45 34 34 C30 26 25 16 25 -2';
-  const branch = 'M34 34 C39 27 42 18 42 -2';
-  return <g strokeLinecap="round" strokeLinejoin="round">
-    <g opacity=".42" filter={`url(#bloom-${id})`} fill="none" stroke={paint.mid} strokeWidth="9"><path d={stem}/><path d={branch}/></g>
-    <path d={`${stem} ${branch}`} fill="none" stroke={paint.dark} strokeWidth="6.9" opacity=".6" transform="translate(.6 1)"/>
-    <path d={stem} fill="none" stroke={paint.shaft} strokeWidth="5.6"/>
-    <path d={branch} fill="none" stroke={paint.shaft} strokeWidth="5"/>
-    {[[25,-2,5.1],[42,-2,4.7]].map(([x,y,r],i)=><g key={i}>
-      <circle cx={x+.3} cy={y+.8} r={r+.2} fill={paint.dark} opacity=".65"/>
-      <circle cx={x} cy={y} r={r} fill={`url(#reference-bead-${id})`}/>
-      <ellipse cx={x-1.3} cy={y-1.7} rx="1.9" ry="1.2" fill="white" opacity=".51" filter={`url(#specular-${id})`}/>
-    </g>)}
-  </g>;
-}
-
-function ReferenceProliferation({ paint, id }: { paint:Paint; id:string }) {
-  return <g>
-    <g fill={paint.glow} opacity=".36" filter={`url(#bloom-${id})`}>
-      {[[25,43,7],[41,34,6],[58,22,5],[47,53,5]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r+2}/>)}
-    </g>
-    {[[25,43,7],[41,34,6],[58,22,5],[47,53,5]].map(([x,y,r],i)=><g key={i}>
-      <circle cx={x+.8} cy={y+1.4} r={r} fill={paint.dark} opacity=".51"/>
-      <circle cx={x} cy={y} r={r} fill={`url(#reference-bead-${id})`}/>
-      <ellipse cx={x-2} cy={y-2} rx={r*.3} ry={r*.18} fill="white" opacity=".55" filter={`url(#specular-${id})`}/>
-    </g>)}
+    {receptor && <ellipse cx="40" cy="39" rx="26" ry="28" fill={paint.glow} fillOpacity=".19"
+      filter={`url(#bloom-${id})`}/>}
+    <g style={{ filter:'blur(.34px)' }}>{referenceTraces[variant]}</g>
   </g>;
 }
 
@@ -186,8 +119,9 @@ export function MarkerVisual({ canonicalName, cellularLocation, visualFamily, vi
     : palette[color];
   const paint: Paint = { light, mid, dark, glow, shaft:`url(#shaft-${id})`, bead:`url(#bead-${id})` };
   const family = cellularLocation === 'unknown' || neutralNumeric ? 'generic' : visualFamily;
-  const referenceVariant = isSurfaceFamily(family) && (visualVariant === 'reference-cd30' || visualVariant === 'reference-cd7')
-    ? visualVariant : null;
+  const referenceVariant = !neutralNumeric &&
+    ((isSurfaceFamily(family) && ['reference-cd30','reference-cd7','reference-cd4'].includes(visualVariant ?? '')) ||
+     (family === 'proliferation-pattern' && visualVariant === 'reference-ki67')) ? visualVariant : null;
   const effectiveState = resultState === 'numeric' ? numericInterpretation ?? 'mentioned' : resultState;
   const isSurface = isSurfaceFamily(family);
   const isProtein = family === 'cytoplasmic-protein' || family === 'nuclear-protein';
@@ -216,9 +150,7 @@ export function MarkerVisual({ canonicalName, cellularLocation, visualFamily, vi
       <g opacity={opacity} filter={!quiet && !missing && !neutralNumeric && !referenceVariant ? `url(#depth-${id})` : undefined}>
         {neutralNumeric ? <g><circle cx="40" cy="40" r="20" fill={glow} fillOpacity=".18" stroke={dark} strokeOpacity=".7" strokeWidth="2"/>
           <text x="40" y="47" textAnchor="middle" fill={dark} fontSize="23" fontWeight="600">#</text></g> :
-          referenceVariant ? <ReferenceReceptor variant={referenceVariant} paint={paint} id={id}/> :
-          isSurface && visualVariant === 'reference-cd4' ? <ReferenceBlue paint={paint} id={id}/> :
-          family === 'proliferation-pattern' && visualVariant === 'reference-ki67' ? <ReferenceProliferation paint={paint} id={id}/> :
+          referenceVariant ? <ReferenceTrace variant={referenceVariant} paint={paint} id={id}/> :
           isSurface ? <SurfaceReceptor family={family} variant={visualVariant} paint={paint}/> :
             isProtein ? <ProteinCluster family={family} variant={visualVariant} paint={paint}/> :
               <Pattern family={family} paint={paint}/>}

@@ -78,3 +78,8 @@
 .marker-label__subtitle{display:block;white-space:nowrap;font-size:9px;font-weight:500;line-height:1.1;color:#435b57}
 .marker-label--green:has(.marker-label__subtitle){min-height:45px;min-width:100px;padding-block:4px}
 .stage-caption{margin-top:15px}
+.reference-scene .marker-label{min-width:96px;min-height:52px;font-size:21px;font-weight:650;padding:0 11px;border-color:#ffffff79;box-shadow:0 5px 18px color-mix(in srgb,var(--marker) 12%,transparent)}
+.reference-scene .marker-label--coral{min-width:105px;background:linear-gradient(140deg,#ffa999,#fb9585);color:white;font-weight:500}
+.reference-scene .marker-label--purple{min-width:104px}
+.reference-scene .marker-label--green:has(.marker-label__subtitle){min-width:125px;min-height:65px;font-weight:700}
+.reference-scene .marker-label__subtitle{font-size:14px}
