@@ -74,7 +74,7 @@ for y in range(height):
         x=end
 
 svg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
-       'preserveAspectRatio="none" aria-hidden="true">',
+       'preserveAspectRatio="xMidYMin slice" aria-hidden="true">',
        '<!-- Color paths traced from the user-supplied 244 × 259 reference. -->',
        '<defs><filter id="traceSoft" x="-2%" y="-2%" width="104%" height="104%"><feGaussianBlur stdDeviation=".32"/></filter></defs>',
        '<g filter="url(#traceSoft)">']

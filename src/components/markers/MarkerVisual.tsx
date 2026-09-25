@@ -54,7 +54,7 @@ function ReferenceTrace({ variant, paint, id }: { variant:string; paint:Paint; i
   return <g>
     {receptor && <ellipse cx="40" cy="39" rx="26" ry="28" fill={paint.glow} fillOpacity=".19"
       filter={`url(#bloom-${id})`}/>}
-    <g style={{ filter:'blur(.34px)' }}>{referenceTraces[variant]}</g>
+    <g style={{ filter:'blur(.85px)' }}>{referenceTraces[variant]}</g>
   </g>;
 }
 
