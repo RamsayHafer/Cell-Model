@@ -52,10 +52,10 @@ core = contour([
     (69,178),(69,163),(72,145),(79,131),(88,119),(99,109)
 ])
 nucleus = ('M97 145 C102 138 110 140 117 135 C125 131 124 125 135 123 '
-           'C145 121 155 125 161 132 C171 137 173 151 174 161 '
-           'C175 172 170 181 168 189 C165 198 157 202 150 204 '
-           'C143 204 139 211 130 212 C117 214 103 209 95 202 '
-           'C88 195 84 183 86 173 C86 162 90 153 97 145Z')
+           'C144 120 158 124 163 134 C170 140 175 150 174 162 '
+           'C177 175 169 181 168 189 C161 197 159 196 151 200 '
+           'C143 203 140 213 128 212 C116 214 102 210 95 201 '
+           'C85 193 83 182 87 174 C85 162 90 153 97 145Z')
 
 FOLD_SHAPES = [
     ('M-.93 -.41 C-.95 -.83 -.46 -1.08 -.07 -.99 '
@@ -132,13 +132,13 @@ DEFS = '''<defs>
     <stop offset="1" stop-color="#665aa4"/>
   </radialGradient>
   <radialGradient id="nuclearMist">
-    <stop stop-color="#f0dffb" stop-opacity=".81"/>
-    <stop offset=".52" stop-color="#d4bfe9" stop-opacity=".39"/>
+    <stop stop-color="#f0dffb" stop-opacity=".94"/>
+    <stop offset=".52" stop-color="#d4bfe9" stop-opacity=".50"/>
     <stop offset="1" stop-color="#ab99d8" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="nuclearLav">
-    <stop stop-color="#d7bfef" stop-opacity=".64"/>
-    <stop offset=".60" stop-color="#ab94d3" stop-opacity=".31"/>
+    <stop stop-color="#d7bfef" stop-opacity=".76"/>
+    <stop offset=".60" stop-color="#ab94d3" stop-opacity=".39"/>
     <stop offset="1" stop-color="#ab94d3" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="cloudBlue">
@@ -157,8 +157,8 @@ DEFS = '''<defs>
     <stop offset="1" stop-color="#fff" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="nuclearShade">
-    <stop stop-color="#594995" stop-opacity=".50"/>
-    <stop offset=".56" stop-color="#6a56a3" stop-opacity=".28"/>
+    <stop stop-color="#594995" stop-opacity=".59"/>
+    <stop offset=".56" stop-color="#6a56a3" stop-opacity=".33"/>
     <stop offset="1" stop-color="#7562ae" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="mint" cx="46%" cy="37%" r="66%">
@@ -296,8 +296,8 @@ def draw(with_mint):
         f'<path d="{nucleus}" fill="none" stroke="#9b8bc9" '
         'stroke-width="7" stroke-opacity=".12"/>',
         f'<path d="{nucleus}" fill="none" stroke="#c9bae5" '
-        'stroke-width="4.2" stroke-opacity=".27"/>',
-        f'<path d="{nucleus}" fill="url(#nucleus)" opacity=".87"/>',
+        'stroke-width="4.2" stroke-opacity=".19"/>',
+        f'<path d="{nucleus}" fill="url(#nucleus)" opacity=".85"/>',
         f'<g clip-path="url(#nucleusClip)">',
     ])
 
@@ -321,6 +321,18 @@ def draw(with_mint):
         bits.append(f'<ellipse cx="{x}" cy="{y}" rx="{rx}" ry="{ry}" '
                     f'fill="url(#{shade})" opacity="{opacity:.2f}" '
                     f'transform="rotate({(i*47)%119-59} {x} {y})"/>')
+
+    # Larger overlapping pigment islands loosen the radial gradients. Their
+    # fills feather to transparency, so none reads as a discrete glossy bead.
+    for d,shade,opacity in [
+        ('M99 147 C109 136 120 141 125 133 C132 128 143 134 148 139 C141 151 129 148 123 156 C111 159 103 156 99 147Z','nuclearMist',.60),
+        ('M131 144 C142 134 149 138 155 143 C166 143 170 158 160 162 C151 169 146 156 137 161 C128 161 124 153 131 144Z','nuclearShade',.55),
+        ('M91 169 C101 157 110 166 120 161 C128 163 129 177 120 181 C108 179 103 193 95 186 C87 184 86 177 91 169Z','nuclearLav',.55),
+        ('M109 180 C117 169 128 171 134 177 C144 175 153 181 150 189 C144 199 134 193 124 199 C111 197 105 189 109 180Z','nuclearShade',.54),
+        ('M143 169 C150 161 159 166 165 171 C169 179 160 185 156 191 C143 194 137 188 137 178 C137 172 140 170 143 169Z','nuclearMist',.54),
+        ('M98 190 C105 184 119 192 128 188 C139 185 142 200 133 206 C119 211 102 204 98 190Z','nuclearLav',.48),
+    ]:
+        bits.append(f'<path d="{d}" fill="url(#{shade})" opacity="{opacity:.2f}"/>')
 
     bits.extend([
         '</g>',
