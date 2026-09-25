@@ -51,10 +51,13 @@ function SurfaceReceptor({ family, variant, paint }: { family:VisualFamily; vari
 // variant select a silhouette; patient state and marker names never do.
 function ReferenceTrace({ variant, paint, id }: { variant:string; paint:Paint; id:string }) {
   const receptor = variant === 'reference-cd30' || variant === 'reference-cd7';
+  const stemStretch = variant === 'reference-cd30' ? 'translate(0 -28) scale(1 1.4)'
+    : variant === 'reference-cd4' ? 'translate(0 -21) scale(1 1.3)' : undefined;
+  const softEdge = variant === 'reference-ki67' ? '.42px' : variant === 'reference-cd7' ? '.85px' : '.65px';
   return <g>
     {receptor && <ellipse cx="40" cy="39" rx="26" ry="28" fill={paint.glow} fillOpacity=".19"
       filter={`url(#bloom-${id})`}/>}
-    <g style={{ filter:'blur(.85px)' }}>{referenceTraces[variant]}</g>
+    <g transform={stemStretch} style={{ filter:`blur(${softEdge})` }}>{referenceTraces[variant]}</g>
   </g>;
 }
 
