@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
-import cellA from '../assets/cell-reference-clean.svg?raw';
-import referenceCell from '../assets/cell-reference.svg?raw';
+import cellA from '../assets/cell-vector-clean.svg?raw';
+import referenceCell from '../assets/cell-vector.svg?raw';
 import cellB from '../assets/cell-b.svg?url';
 import type { Marker } from '../markers';
 import { MarkerVisual } from './markers/MarkerVisual';
