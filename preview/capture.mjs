@@ -23,4 +23,28 @@ await page.screenshot({path:'preview/browser-b-selected.png'});
 await page.goto('http://127.0.0.1:4173/?reference=1', {waitUntil:'networkidle'});
 await page.screenshot({path:'preview/browser-reference-mobile.png'});
 await page.locator('.cell-composition').screenshot({path:'preview/browser-reference-cell.png'});
+// QA-only comparison. The shipped app continues to use the new vector art;
+// swap the old SVG into this browser session to capture the same markers,
+// placement and viewport against the approved traced cell.
+await page.setViewportSize({width:1200,height:1200});
+await page.locator('.cell-composition').evaluate(el => {
+  el.style.transform = 'scale(2)';
+  el.style.transformOrigin = 'top left';
+});
+await page.locator('.cell-composition').screenshot({path:'preview/browser-vector-reference-2x.png'});
+await page.setViewportSize({width:390,height:844});
+await page.locator('.cell-composition').evaluate(el => { el.style.transform = ''; });
+await page.locator('.inline-art').evaluate(async el => {
+  const response = await fetch('/src/assets/cell-reference.svg');
+  if (!response.ok) throw new Error('Could not load approved traced reference');
+  el.innerHTML = await response.text();
+});
+await page.screenshot({path:'preview/browser-trace-reference-mobile.png'});
+await page.locator('.cell-composition').screenshot({path:'preview/browser-trace-reference-cell.png'});
+await page.setViewportSize({width:1200,height:1200});
+await page.locator('.cell-composition').evaluate(el => {
+  el.style.transform = 'scale(2)';
+  el.style.transformOrigin = 'top left';
+});
+await page.locator('.cell-composition').screenshot({path:'preview/browser-trace-reference-2x.png'});
 await browser.close();
