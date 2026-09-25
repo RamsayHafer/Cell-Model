@@ -172,10 +172,6 @@ DEFS = '''<defs>
   <filter id="aura" x="-30%" y="-30%" width="160%" height="160%">
     <feGaussianBlur stdDeviation="6"/>
   </filter>
-  <filter id="nuclearTexture" x="-15%" y="-15%" width="130%" height="130%">
-    <feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="3" seed="17"/>
-    <feColorMatrix type="matrix" values="0 0 0 0 .44  0 0 0 0 .36  0 0 0 0 .64  .8 0 0 0 -.18"/>
-  </filter>
   <clipPath id="silhouette"><path d="''' + outer + '''"/></clipPath>
   <clipPath id="nucleusClip"><path d="''' + nucleus + '''"/></clipPath>
 </defs>'''
@@ -337,11 +333,6 @@ def draw(with_mint):
         ('M98 190 C105 184 119 192 128 188 C139 185 142 200 133 206 C119 211 102 204 98 190Z','nuclearLav',.48),
     ]:
         bits.append(f'<path d="{d}" fill="url(#{shade})" opacity="{opacity:.2f}"/>')
-
-    # Procedural, low-frequency watercolor variation stays resolution
-    # independent. It is clipped to the nucleus and never blurs an edge.
-    bits.append('<rect x="84" y="121" width="93" height="94" '
-                'filter="url(#nuclearTexture)" opacity=".50"/>')
 
     bits.extend([
         '</g>',
