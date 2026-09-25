@@ -31,6 +31,8 @@ A GitHub Actions visual check builds the app and uses Chromium at 390 × 844 to 
 
 Open `/?reference=1` to inspect the four-marker visual reference study (CD4, CD30, CD7, Ki-67); this scene is illustrative and represents no patient findings. The URL starts in the reference study, and its selector also lets you return to the visit or location study. The browser visual check captures this scene separately.
 
+Open `/?reference=1&vector=1` to preview the separate high-resolution cell reconstruction. `src/assets/draw_vector_cell.py` authors two editable SVGs from smooth contours, individually placed folds, color fields, a sculpted nucleus, and localized lighting; it does not read the small screenshot or emit pixel-derived paths. The approved source-derived cell remains the default while this version is under visual review. The marker renderer, marker coordinates, interactions, and result logic are identical in both views. The Chromium visual check captures both cells at 390 × 844 and at 2× enlargement.
+
 The supplied approved mockup and subsequent close-up informed the revised cell treatment: rounded lavender membrane folds, a dimensional blue middle, a sculpted purple nucleus, and glossy, candy-colored receptors. The gradients are intentionally stylized and are not molecular structures. The cell artwork is generated with `src/assets/generate_cells.py`; the output SVG files are editable. Existing PNGs in `preview/` without a `browser-` prefix are rendered design comparisons; the `browser-` files from the workflow are actual Chromium captures.
 
 ### Location references

@@ -20,11 +20,10 @@ await page.locator('.cell-composition').screenshot({path:'preview/browser-b-mark
 await page.getByRole('button', {name:'CD30: Illustrated receptor'}).click();
 await page.getByRole('region', {name:'CD30 details'}).waitFor();
 await page.screenshot({path:'preview/browser-b-selected.png'});
-await page.goto('http://127.0.0.1:4173/?reference=1', {waitUntil:'networkidle'});
+await page.goto('http://127.0.0.1:4173/?reference=1&vector=1', {waitUntil:'networkidle'});
 await page.screenshot({path:'preview/browser-reference-mobile.png'});
 await page.locator('.cell-composition').screenshot({path:'preview/browser-reference-cell.png'});
-// QA-only comparison. The shipped app continues to use the new vector art;
-// swap the old SVG into this browser session to capture the same markers,
+// QA-only comparison. Swap the old SVG into this browser session to capture the same markers,
 // placement and viewport against the approved traced cell.
 const vectorMarkup = await page.locator('.inline-art').innerHTML();
 await page.locator('.inline-art').evaluate(async el => {
