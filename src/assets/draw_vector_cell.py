@@ -51,11 +51,11 @@ core = contour([
     (149,220),(131,225),(113,223),(96,218),(84,208),(75,196),
     (69,178),(69,163),(72,145),(79,131),(88,119),(99,109)
 ])
-nucleus = ('M101 139 C106 133 111 128 122 126 C131 120 144 121 153 124 '
-           'C161 127 167 134 171 146 C176 158 174 174 170 184 '
-           'C166 199 155 206 142 211 C129 215 115 214 105 210 '
-           'C93 205 87 196 85 185 C81 172 87 160 93 150 '
-           'C96 145 98 142 101 139Z')
+nucleus = ('M97 145 C102 138 109 136 116 134 C124 131 124 125 135 123 '
+           'C145 121 155 125 161 132 C171 137 173 151 174 161 '
+           'C175 172 170 181 168 189 C165 198 157 202 150 204 '
+           'C143 204 139 211 130 212 C117 214 103 209 95 202 '
+           'C88 195 84 183 86 173 C86 162 90 153 97 145Z')
 
 def petal(rng, cx, cy, rx, ry, angle, color, opacity):
     # Each fold has an independent irregular contour, broad colored underside,
@@ -68,6 +68,8 @@ def petal(rng, cx, cy, rx, ry, angle, color, opacity):
     angle += rng.uniform(-12,12)
     return (f'<g transform="translate({cx:.2f} {cy:.2f}) rotate({angle:.1f}) '
             f'scale({rx:.2f} {ry:.2f})" opacity="{opacity:.2f}">'
+            f'<path d="{d}" fill="#8a82bf" opacity=".11" '
+            'transform="translate(.11 .17)"/>'
             f'<path d="{d}" fill="url(#{color})"/>'
             '</g>')
 
@@ -90,16 +92,16 @@ DEFS = '''<defs>
     <stop offset="1" stop-color="#b0c1e9" stop-opacity=".24"/>
   </radialGradient>
   <radialGradient id="foldLav" cx="34%" cy="26%" r="78%">
-    <stop stop-color="#fff" stop-opacity=".92"/>
-    <stop offset=".29" stop-color="#f3eaff" stop-opacity=".90"/>
-    <stop offset=".70" stop-color="#d5c9f6" stop-opacity=".74"/>
-    <stop offset="1" stop-color="#9c94d3" stop-opacity=".18"/>
+    <stop stop-color="#fff" stop-opacity=".98"/>
+    <stop offset=".30" stop-color="#f8f0ff" stop-opacity=".96"/>
+    <stop offset=".68" stop-color="#d9c9f8" stop-opacity=".87"/>
+    <stop offset="1" stop-color="#a99bd7" stop-opacity=".16"/>
   </radialGradient>
   <radialGradient id="foldBlue" cx="30%" cy="24%" r="84%">
-    <stop stop-color="#fff" stop-opacity=".92"/>
-    <stop offset=".32" stop-color="#e4f7ff" stop-opacity=".93"/>
-    <stop offset=".75" stop-color="#b5d5f1" stop-opacity=".80"/>
-    <stop offset="1" stop-color="#8ba8d8" stop-opacity=".16"/>
+    <stop stop-color="#fff" stop-opacity=".98"/>
+    <stop offset=".31" stop-color="#eaf9ff" stop-opacity=".96"/>
+    <stop offset=".73" stop-color="#b7d8f4" stop-opacity=".89"/>
+    <stop offset="1" stop-color="#89a4d6" stop-opacity=".16"/>
   </radialGradient>
   <radialGradient id="foldPink" cx="34%" cy="25%" r="82%">
     <stop stop-color="#fff9ff" stop-opacity=".96"/>
@@ -122,6 +124,26 @@ DEFS = '''<defs>
     <stop stop-color="#f6eaff" stop-opacity=".85"/>
     <stop offset=".39" stop-color="#dfcef9" stop-opacity=".56"/>
     <stop offset="1" stop-color="#7866b4" stop-opacity=".04"/>
+  </radialGradient>
+  <radialGradient id="cloudBlue">
+    <stop stop-color="#7caadf" stop-opacity=".42"/>
+    <stop offset=".51" stop-color="#9ac9e7" stop-opacity=".19"/>
+    <stop offset="1" stop-color="#b5ddf7" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="cloudLav">
+    <stop stop-color="#a899d5" stop-opacity=".45"/>
+    <stop offset=".58" stop-color="#c8b6e9" stop-opacity=".19"/>
+    <stop offset="1" stop-color="#d5c9f4" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="cloudWhite">
+    <stop stop-color="#fff" stop-opacity=".83"/>
+    <stop offset=".45" stop-color="#f2f7ff" stop-opacity=".37"/>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="nuclearShade">
+    <stop stop-color="#504492" stop-opacity=".42"/>
+    <stop offset=".56" stop-color="#61529b" stop-opacity=".20"/>
+    <stop offset="1" stop-color="#7562ae" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="mint" cx="46%" cy="37%" r="66%">
     <stop stop-color="#d9fff3" stop-opacity=".64"/>
@@ -228,6 +250,26 @@ def draw(with_mint):
                     f'stroke-width="{width}" stroke-opacity=".21" '
                     'stroke-linecap="round"/>')
 
+    # Uneven fields of color and scattered pearly lights fill gaps between
+    # lobes. Radial alpha gradients fade each field without a global blur.
+    color_fields = [
+        (78,119,15,12,'cloudLav'),(98,109,13,9,'cloudBlue'),
+        (119,105,15,9,'cloudWhite'),(148,102,16,10,'cloudBlue'),
+        (177,118,15,13,'cloudLav'),(188,139,12,16,'cloudWhite'),
+        (179,162,15,14,'cloudBlue'),(188,181,15,16,'cloudLav'),
+        (177,201,15,14,'cloudWhite'),(154,218,17,10,'cloudBlue'),
+        (132,230,16,9,'cloudLav'),(103,222,14,13,'cloudWhite'),
+        (79,202,12,15,'cloudBlue'),(70,178,13,13,'cloudWhite'),
+        (78,153,13,13,'cloudBlue'),(91,134,16,11,'cloudWhite'),
+        (107,122,11,10,'cloudBlue'),(144,120,14,11,'cloudLav'),
+        (162,133,12,13,'cloudBlue'),(160,191,14,15,'cloudWhite'),
+        (115,214,16,10,'cloudBlue'),(86,181,12,12,'cloudLav'),
+        (186,110,10,14,'cloudWhite'),(103,238,13,10,'cloudLav'),
+    ]
+    for x,y,rx,ry,shade in color_fields:
+        bits.append(f'<ellipse cx="{x}" cy="{y}" rx="{rx}" ry="{ry}" '
+                    f'fill="url(#{shade})"/>')
+
     # Boundary glow is a fine uneven contour, not a blur over the cell.
     bits.extend([
         f'<path d="{outer}" fill="none" stroke="#fff" stroke-width="1.25" '
@@ -252,6 +294,11 @@ def draw(with_mint):
         'C166 181 153 192 138 190 C116 186 105 169 86 184Z" '
         'fill="#584e9a" opacity=".15"/>',
     ])
+
+    for x,y,rx,ry in [(117,152,16,12),(151,150,13,11),(126,179,19,13),
+                       (161,181,12,13),(108,191,14,14),(145,199,14,9)]:
+        bits.append(f'<ellipse cx="{x}" cy="{y}" rx="{rx}" ry="{ry}" '
+                    'fill="url(#nuclearShade)"/>')
 
     for i,(x,y,rx,ry,alpha) in enumerate([
         (118,145,10,5,.52),(145,137,12,6,.48),(158,147,9,8,.39),
