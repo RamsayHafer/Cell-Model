@@ -45,44 +45,56 @@ edge = [(117,68),(130,70),(145,70),(163,75),(183,86),(201,105),
         (56,205),(49,182),(47,158),(49,132),(55,112),(67,94),(84,81)]
 mask = Image.new('L', (width,height),0)
 ImageDraw.Draw(mask).polygon(edge,fill=255)
-mask = mask.filter(ImageFilter.GaussianBlur(1.6))
-alpha = np.asarray(mask).astype(float)/255
-paper = np.array([255,252,250],dtype=float)
-color_distance = np.linalg.norm(clean.astype(float)-paper,axis=2)
-alpha *= np.clip((color_distance-2.5)/13,0,1)
-level = np.uint8(np.clip(np.round(alpha*4),0,4))
+mask = np.asarray(mask.filter(ImageFilter.GaussianBlur(1.6))).astype(float)/255
 
-# Median-cut color layers preserve the reference's irregular spatial texture.
-# Runs of same-color pixels become compact SVG paths instead of rectangles.
-poster = Image.fromarray(clean).quantize(colors=192, method=Image.Quantize.MEDIANCUT,
-                                          dither=Image.Dither.NONE)
-ids = np.asarray(poster)
-colors = poster.getpalette()
-paths: dict[tuple[int,int],list[str]] = defaultdict(list)
-for y in range(height):
-    x=0
-    while x<width:
-        a = int(level[y,x])
-        if not a:
-            x+=1
-            continue
-        c = int(ids[y,x])
-        end=x+1
-        while end<width and level[y,end]==a and ids[y,end]==c:
-            end+=1
-        paths[(c,a)].append(f'M{x} {y}h{end-x}v1H{x}z')
-        x=end
+# The reference's mint Ki-67 treatment and leader cross the cell artwork.
+# Only that study uses them. For visit and location scenes, reconstruct the
+# hidden lower-right cell from corresponding lower-left painted folds.
+mirror = clean[:, np.clip(256-np.arange(width),0,width-1)]
+weight = np.clip((xx-122)/10,0,1)*np.clip((yy-176)/12,0,1)
+untinted = np.uint8(np.clip(clean.astype(float)*(1-weight[:,:,None])+
+                            mirror.astype(float)*weight[:,:,None],0,255))
 
-svg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
-       'preserveAspectRatio="xMidYMin slice" aria-hidden="true">',
-       '<!-- Color paths traced from the user-supplied 244 × 259 reference. -->',
-       '<defs><filter id="traceSoft" x="-2%" y="-2%" width="104%" height="104%"><feGaussianBlur stdDeviation=".32"/></filter></defs>',
-       '<g filter="url(#traceSoft)">']
-for (c,a), segments in sorted(paths.items()):
-    rgb=colors[c*3:c*3+3]
-    svg.append(f'<path fill="#{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}" '
-               f'opacity="{a/4:.2f}" d="{"".join(segments)}"/>')
-svg.extend(['</g>','</svg>'])
-(ROOT/'cell-reference.svg').write_text('\n'.join(svg)+'\n')
-print(f'Wrote native SVG, {len(paths)} color/alpha layers, '
-      f'{sum(map(len,paths.values()))} painted runs')
+def write_svg(pixels: np.ndarray, filename: str) -> None:
+    alpha = mask.copy()
+    paper = np.array([255,252,250],dtype=float)
+    color_distance = np.linalg.norm(pixels.astype(float)-paper,axis=2)
+    alpha *= np.clip((color_distance-2.5)/13,0,1)
+    level = np.uint8(np.clip(np.round(alpha*4),0,4))
+
+    # Median-cut color layers preserve irregular spatial texture. Runs of
+    # same-color pixels become compact SVG paths instead of rectangles.
+    poster = Image.fromarray(pixels).quantize(colors=192, method=Image.Quantize.MEDIANCUT,
+                                               dither=Image.Dither.NONE)
+    ids = np.asarray(poster)
+    colors = poster.getpalette()
+    paths: dict[tuple[int,int],list[str]] = defaultdict(list)
+    for y in range(height):
+        x=0
+        while x<width:
+            a = int(level[y,x])
+            if not a:
+                x+=1
+                continue
+            c = int(ids[y,x])
+            end=x+1
+            while end<width and level[y,end]==a and ids[y,end]==c:
+                end+=1
+            paths[(c,a)].append(f'M{x} {y}h{end-x}v1H{x}z')
+            x=end
+
+    svg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
+           'preserveAspectRatio="xMidYMin slice" aria-hidden="true">',
+           '<!-- Color paths traced from the user-supplied 244 × 259 reference. -->',
+           '<defs><filter id="traceSoft" x="-2%" y="-2%" width="104%" height="104%"><feGaussianBlur stdDeviation=".32"/></filter></defs>',
+           '<g filter="url(#traceSoft)">']
+    for (c,a), segments in sorted(paths.items()):
+        rgb=colors[c*3:c*3+3]
+        svg.append(f'<path fill="#{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}" '
+                   f'opacity="{a/4:.2f}" d="{"".join(segments)}"/>')
+    svg.extend(['</g>','</svg>'])
+    (ROOT/filename).write_text('\n'.join(svg)+'\n')
+    print(f'Wrote {filename}, {len(paths)} color/alpha layers')
+
+write_svg(clean,'cell-reference.svg')
+write_svg(untinted,'cell-reference-clean.svg')

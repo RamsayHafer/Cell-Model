@@ -4,7 +4,7 @@ import { CellArtwork, type CellMode } from './CellArtwork';
 import { MarkerHotspot } from './MarkerHotspot';
 import { MarkerDetailSheet } from './MarkerDetailSheet';
 
-export function CellVisualization({ mode, markers, showMarkers = true }: { mode: CellMode; markers: Marker[]; showMarkers?: boolean }) {
+export function CellVisualization({ mode, markers, showMarkers = true, referenceStudy=false }: { mode: CellMode; markers: Marker[]; showMarkers?: boolean; referenceStudy?: boolean }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   useEffect(() => setSelectedId(null), [mode, showMarkers]);
@@ -13,7 +13,7 @@ export function CellVisualization({ mode, markers, showMarkers = true }: { mode:
   const selected = visible.find(marker => marker.id === selectedId);
   return <div className="cell-experience">
     <div className="cell-stage"><span className="stage-aura" aria-hidden="true"/><div className="cell-composition">
-      <CellArtwork mode={mode} markers={visible} selectedId={selectedId} hoveredId={hoveredId}/>
+      <CellArtwork mode={mode} markers={visible} selectedId={selectedId} hoveredId={hoveredId} referenceStudy={referenceStudy}/>
       <svg className="marker-connectors" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
         {visible.filter(marker => marker.cellularLocation === 'nuclear' || marker.cellularLocation === 'cytoplasmic').map(marker => <path key={marker.id} className={`connector connector--${marker.palette} ${selectedId && selectedId !== marker.id ? 'is-muted' : ''}`}
           d={marker.exampleOnly && marker.status === 'inside cell'
