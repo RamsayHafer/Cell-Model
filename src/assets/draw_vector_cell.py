@@ -174,7 +174,7 @@ DEFS = '''<defs>
   </filter>
   <filter id="nuclearTexture" x="-15%" y="-15%" width="130%" height="130%">
     <feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="3" seed="17"/>
-    <feColorMatrix type="matrix" values="0 0 0 0 .44  0 0 0 0 .36  0 0 0 0 .64  .38 .38 .38 0 -.43"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 .44  0 0 0 0 .36  0 0 0 0 .64  .8 0 0 0 -.18"/>
   </filter>
   <clipPath id="silhouette"><path d="''' + outer + '''"/></clipPath>
   <clipPath id="nucleusClip"><path d="''' + nucleus + '''"/></clipPath>
