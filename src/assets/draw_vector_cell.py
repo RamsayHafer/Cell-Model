@@ -79,6 +79,8 @@ def fold(rng, cx, cy, rx, ry, angle, color, opacity):
     angle += rng.uniform(-27,27)
     return (f'<g transform="translate({cx:.2f} {cy:.2f}) rotate({angle:.1f}) '
             f'scale({rx:.2f} {ry:.2f})" opacity="{opacity:.2f}">'
+            f'<path d="{d}" fill="url(#foldShade)" '
+            'transform="translate(.19 .27)"/>'
             f'<path d="{d}" fill="url(#{color})"/>'
             '</g>')
 
@@ -102,21 +104,26 @@ DEFS = '''<defs>
   </radialGradient>
   <radialGradient id="foldLav" cx="34%" cy="26%" r="78%">
     <stop stop-color="#fff" stop-opacity=".89"/>
-    <stop offset=".28" stop-color="#f8f0ff" stop-opacity=".70"/>
-    <stop offset=".62" stop-color="#d9c9f8" stop-opacity=".36"/>
+    <stop offset=".28" stop-color="#f8f0ff" stop-opacity=".83"/>
+    <stop offset=".62" stop-color="#d9c9f8" stop-opacity=".57"/>
     <stop offset="1" stop-color="#a99bd7" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="foldBlue" cx="30%" cy="24%" r="84%">
     <stop stop-color="#fff" stop-opacity=".88"/>
-    <stop offset=".32" stop-color="#e8f1ff" stop-opacity=".72"/>
-    <stop offset=".68" stop-color="#b7d1f1" stop-opacity=".36"/>
+    <stop offset=".32" stop-color="#e8f1ff" stop-opacity=".81"/>
+    <stop offset=".68" stop-color="#b7d1f1" stop-opacity=".56"/>
     <stop offset="1" stop-color="#899fdb" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="foldPink" cx="34%" cy="25%" r="82%">
     <stop stop-color="#fff9ff" stop-opacity=".86"/>
-    <stop offset=".34" stop-color="#f3dff8" stop-opacity=".70"/>
-    <stop offset=".70" stop-color="#dac0ed" stop-opacity=".32"/>
+    <stop offset=".34" stop-color="#f3dff8" stop-opacity=".82"/>
+    <stop offset=".70" stop-color="#dac0ed" stop-opacity=".53"/>
     <stop offset="1" stop-color="#bc99df" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="foldShade" cx="67%" cy="74%" r="68%">
+    <stop stop-color="#8f83bd" stop-opacity=".40"/>
+    <stop offset=".53" stop-color="#aaa0d7" stop-opacity=".22"/>
+    <stop offset="1" stop-color="#c4bced" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="nucleus" cx="29%" cy="21%" r="84%">
     <stop stop-color="#c8b5e7"/><stop offset=".23" stop-color="#af9cda"/>
@@ -125,13 +132,13 @@ DEFS = '''<defs>
     <stop offset="1" stop-color="#665aa4"/>
   </radialGradient>
   <radialGradient id="nuclearMist">
-    <stop stop-color="#e7d7f7" stop-opacity=".58"/>
-    <stop offset=".52" stop-color="#c7b6e7" stop-opacity=".25"/>
+    <stop stop-color="#f0dffb" stop-opacity=".81"/>
+    <stop offset=".52" stop-color="#d4bfe9" stop-opacity=".39"/>
     <stop offset="1" stop-color="#ab99d8" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="nuclearLav">
-    <stop stop-color="#c9b5e9" stop-opacity=".49"/>
-    <stop offset=".60" stop-color="#ab94d3" stop-opacity=".19"/>
+    <stop stop-color="#d7bfef" stop-opacity=".64"/>
+    <stop offset=".60" stop-color="#ab94d3" stop-opacity=".31"/>
     <stop offset="1" stop-color="#ab94d3" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="cloudBlue">
@@ -150,8 +157,8 @@ DEFS = '''<defs>
     <stop offset="1" stop-color="#fff" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="nuclearShade">
-    <stop stop-color="#594995" stop-opacity=".32"/>
-    <stop offset=".56" stop-color="#6a56a3" stop-opacity=".14"/>
+    <stop stop-color="#594995" stop-opacity=".50"/>
+    <stop offset=".56" stop-color="#6a56a3" stop-opacity=".28"/>
     <stop offset="1" stop-color="#7562ae" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="mint" cx="46%" cy="37%" r="66%">
@@ -213,7 +220,7 @@ def draw(with_mint):
                      'foldBlue' if (index*3+j)%5 in (0,2) else 'foldLav')
             bits.append(fold(rng,x,y,rng.uniform(4.0,10.5),
                              rng.uniform(4.8,12.3),degrees+100,
-                             color,rng.uniform(.43,.82)))
+                             color,rng.uniform(.49,.87)))
 
     bits.extend([
         f'<path d="{inner}" fill="url(#cortex)"/>',
@@ -237,7 +244,7 @@ def draw(with_mint):
         bits.append(fold(rng,x+rng.uniform(-3.3,3.3),y+rng.uniform(-3.8,3.8),
                          sx*rng.uniform(.70,1.31),sy*rng.uniform(.74,1.35),
                          turn,'foldBlue' if i%4 else 'foldLav',
-                         rng.uniform(.32,.67)))
+                         rng.uniform(.39,.72)))
 
     # A few broad, translucent whorls hint at connective folds. They do not
     # outline the concentric layers or repeat around the perimeter.
@@ -286,11 +293,11 @@ def draw(with_mint):
         '</g>',
         # Soft nested edges give the nucleus an irregular, translucent
         # boundary without blurring the SVG silhouette.
-        f'<path d="{nucleus}" fill="none" stroke="#917ebf" '
-        'stroke-width="6" stroke-opacity=".09"/>',
-        f'<path d="{nucleus}" fill="none" stroke="#b9a6dc" '
-        'stroke-width="3.2" stroke-opacity=".16"/>',
-        f'<path d="{nucleus}" fill="url(#nucleus)" opacity=".93"/>',
+        f'<path d="{nucleus}" fill="none" stroke="#9b8bc9" '
+        'stroke-width="7" stroke-opacity=".12"/>',
+        f'<path d="{nucleus}" fill="none" stroke="#c9bae5" '
+        'stroke-width="4.2" stroke-opacity=".27"/>',
+        f'<path d="{nucleus}" fill="url(#nucleus)" opacity=".87"/>',
         f'<g clip-path="url(#nucleusClip)">',
     ])
 
