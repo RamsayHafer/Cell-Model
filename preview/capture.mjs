@@ -4,6 +4,7 @@ import { chromium } from 'playwright';
 const browser = await chromium.launch({ headless:true });
 const page = await browser.newPage({ viewport:{width:390,height:844}, deviceScaleFactor:2, isMobile:true, hasTouch:true });
 await page.goto('http://127.0.0.1:4173/', {waitUntil:'networkidle'});
+await page.screenshot({path:'preview/browser-visit-mobile.png'});
 await page.getByRole('button', {name:'Marker study'}).click();
 await page.screenshot({path:'preview/browser-a-mobile.png'});
 await page.locator('.cell-composition').screenshot({path:'preview/browser-a-markers-closeup.png'});
