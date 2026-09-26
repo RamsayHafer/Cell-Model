@@ -49,4 +49,25 @@ await page.locator('.cell-composition').evaluate(el => {
 await page.locator('.cell-composition').screenshot({path:'preview/browser-trace-reference-2x.png'});
 await page.locator('.inline-art').evaluate((el,markup) => {el.innerHTML=markup;},vectorMarkup);
 await page.locator('.cell-composition').screenshot({path:'preview/browser-vector-reference-2x.png'});
+// Resolution-only check of the approved 244px trace against its 1512px
+// supersampled raster. Both use the same layout and separate marker layer.
+await page.setViewportSize({width:390,height:844});
+for (const [query, name] of [['?reference=1&approved=1','approved'], ['?reference=1','improved']]) {
+  await page.goto(`http://127.0.0.1:4173/${query}`, {waitUntil:'networkidle'});
+  await page.locator('.cell-art--a').waitFor();
+  if (name === 'improved') await page.locator('.cell-art--a img.art-image').evaluate(img => img.decode());
+  await page.screenshot({path:`preview/browser-${name}-390x844.png`});
+  await page.locator('.cell-composition').screenshot({path:`preview/browser-${name}-composition.png`});
+  await page.setViewportSize({width:1200,height:1200});
+  await page.locator('.cell-composition').evaluate(el => {
+    const board = document.createElement('div');
+    board.className = 'reference-scene';
+    Object.assign(board.style, {position:'fixed',inset:'0',zIndex:'10000',background:'#fffcfa'});
+    document.body.appendChild(board);
+    board.appendChild(el);
+    Object.assign(el.style, {position:'absolute',top:'0',left:'0',width:'378px',height:'378px',transform:'scale(2)',transformOrigin:'top left'});
+  });
+  await page.locator('.cell-composition').screenshot({path:`preview/browser-${name}-2x.png`});
+  await page.setViewportSize({width:390,height:844});
+}
 await browser.close();
