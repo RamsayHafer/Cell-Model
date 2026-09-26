@@ -1,5 +1,4 @@
 import { useId } from 'react';
-import { referenceTraces } from './referenceTraces';
 import type { MarkerPalette, MarkerVisualSpec, VisualFamily } from './types';
 
 type Paint = { light: string; mid: string; dark: string; glow: string; shaft: string; bead: string };
@@ -47,17 +46,37 @@ function SurfaceReceptor({ family, variant, paint }: { family:VisualFamily; vari
   </g>;
 }
 
-// Reference variants are independently traced SVG color paths. The family and
-// variant select a silhouette; patient state and marker names never do.
-function ReferenceTrace({ variant, paint, id }: { variant:string; paint:Paint; id:string }) {
-  const receptor = variant === 'reference-cd30' || variant === 'reference-cd7';
-  const stemStretch = variant === 'reference-cd30' ? 'translate(0 -28) scale(1 1.4)'
-    : variant === 'reference-cd4' ? 'translate(0 -21) scale(1 1.3)' : undefined;
-  const softEdge = variant === 'reference-ki67' ? '.42px' : variant === 'reference-cd7' ? '.85px' : '.65px';
+// The reference variants use the same paint and result-state pipeline as every
+// other family. Curved shafts and asymmetric terminals provide a higher-detail
+// treatment without embedding pixels or making marker names choose artwork.
+function ReferenceTreatment({ variant, paint, id }: { variant:string; paint:Paint; id:string }) {
+  if (variant === 'reference-ki67') return <g>
+    <ellipse cx="40" cy="39" rx="29" ry="26" fill={paint.glow} fillOpacity=".21" filter={`url(#bloom-${id})`}/>
+    <path d="M26 43Q34 35 40 31Q47 38 54 43M40 31Q40 43 43 52" fill="none" stroke={paint.dark} strokeWidth="4.5" strokeOpacity=".75" strokeLinecap="round"/>
+    <path d="M26 43Q34 35 40 31Q47 38 54 43M40 31Q40 43 43 52" fill="none" stroke={paint.shaft} strokeWidth="2.9" strokeLinecap="round"/>
+    {[[24,43,7],[40,27,7],[56,43,6],[43,54,6]].map(([x,y,r],i)=><Pearl key={i} x={x} y={y} r={r} paint={paint}/>)}
+  </g>;
+
+  const cd30 = variant === 'reference-cd30';
+  const cd7 = variant === 'reference-cd7';
+  const contour = cd30
+    ? 'M28 76C32 67 36 55 40 47C38 39 31 34 28 25M40 47C44 37 49 29 51 18M40 47C49 46 58 43 63 34M40 47C36 43 34 40 32 36'
+    : cd7
+      ? 'M74 42C62 43 51 45 42 43C33 43 27 37 22 28M42 43C32 44 22 48 17 58M42 43C35 50 33 57 31 63'
+      : 'M46 76C43 64 39 52 37 44C29 42 22 36 18 27M37 44C44 38 49 27 51 20';
+  const terminals: [number,number,number][] = cd30
+    ? [[27,23,8],[51,17,8],[63,33,8],[32,35,7],[43,45,8]]
+    : cd7 ? [[20,25,8],[16,59,8],[30,63,7]]
+      : [[18,26,9],[51,19,9]];
   return <g>
-    {receptor && <ellipse cx="40" cy="39" rx="26" ry="28" fill={paint.glow} fillOpacity=".19"
-      filter={`url(#bloom-${id})`}/>}
-    <g transform={stemStretch} style={{ filter:`blur(${softEdge})` }}>{referenceTraces[variant]}</g>
+    <ellipse cx="40" cy="42" rx="27" ry="30" fill={paint.glow} fillOpacity=".16" filter={`url(#bloom-${id})`}/>
+    <path d={contour} fill="none" stroke={paint.dark} strokeOpacity=".72" strokeWidth={cd30?14:13} strokeLinecap="round" strokeLinejoin="round"/>
+    <path d={contour} fill="none" stroke={paint.shaft} strokeWidth={cd30?11:10} strokeLinecap="round" strokeLinejoin="round"/>
+    <path d={cd30 ? 'M31 69Q36 58 39 51M41 42Q45 32 49 23M46 44L56 39'
+      : cd7 ? 'M68 41Q55 42 44 41M36 42Q29 39 25 33'
+        : 'M43 69Q39 55 36 46M33 41Q25 37 21 31'}
+      fill="none" stroke="#fff" strokeOpacity=".66" strokeWidth="2.3" strokeLinecap="round"/>
+    {terminals.map(([x,y,r],i)=><Pearl key={i} x={x} y={y} r={r} paint={paint}/>)}
   </g>;
 }
 
@@ -153,7 +172,7 @@ export function MarkerVisual({ canonicalName, cellularLocation, visualFamily, vi
       <g opacity={opacity} filter={!quiet && !missing && !neutralNumeric && !referenceVariant ? `url(#depth-${id})` : undefined}>
         {neutralNumeric ? <g><circle cx="40" cy="40" r="20" fill={glow} fillOpacity=".18" stroke={dark} strokeOpacity=".7" strokeWidth="2"/>
           <text x="40" y="47" textAnchor="middle" fill={dark} fontSize="23" fontWeight="600">#</text></g> :
-          referenceVariant ? <ReferenceTrace variant={referenceVariant} paint={paint} id={id}/> :
+          referenceVariant ? <ReferenceTreatment variant={referenceVariant} paint={paint} id={id}/> :
           isSurface ? <SurfaceReceptor family={family} variant={visualVariant} paint={paint}/> :
             isProtein ? <ProteinCluster family={family} variant={visualVariant} paint={paint}/> :
               <Pattern family={family} paint={paint}/>}
