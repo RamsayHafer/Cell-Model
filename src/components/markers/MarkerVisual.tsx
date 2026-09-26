@@ -33,7 +33,7 @@ function SoftTerminal({ x, y, rx, ry, angle=0, id }: { x:number; y:number; rx:nu
   </g>;
 }
 
-function SurfaceReceptor({ family, variant, paint }: { family:VisualFamily; variant?:string; paint:Paint }) {
+function SurfaceReceptor({ family, variant, paint, id }: { family:VisualFamily; variant?:string; paint:Paint; id:string }) {
   const branched = family === 'branched-receptor';
   const forked = family === 'forked-receptor';
   // Variants alter the silhouette within a family; the marker name is never consulted.
@@ -41,15 +41,15 @@ function SurfaceReceptor({ family, variant, paint }: { family:VisualFamily; vari
   const left = longArms ? 'M40 69 V45 C33 40 24 34 19 25' : 'M40 70 V45 C33 38 26 33 22 24';
   const right = longArms ? 'M40 45 C48 38 55 34 58 22' : 'M40 45 C48 37 55 32 58 23';
   return <g>
-    <path d={`${left} ${right}`} fill="none" stroke={paint.dark} strokeWidth={branched?15:14} strokeLinecap="round" strokeLinejoin="round"/>
-    <path d={`${left} ${right}`} fill="none" stroke={paint.shaft} strokeWidth={branched?10:9} strokeLinecap="round" strokeLinejoin="round"/>
-    {branched && <><path d="M40 45 V29" fill="none" stroke={paint.dark} strokeWidth="14" strokeLinecap="round"/>
-      <path d="M40 45 V29" fill="none" stroke={paint.shaft} strokeWidth="9" strokeLinecap="round"/></>}
-    <path d="M36.5 62V47 M29 34L24 28 M48 34L54 27" fill="none" stroke="#fff" strokeWidth="2.2" strokeOpacity=".76" strokeLinecap="round"/>
-    <Pearl x={longArms?18:21} y={longArms?22:22} r={branched?9:7} paint={paint}/>
-    <Pearl x={longArms?59:59} y={longArms?21:21} r={branched?9.5:7} paint={paint}/>
-    {branched ? <Pearl x={40} y={29} r={9.5} paint={paint}/> :
-      <Pearl x={40} y={38} r={forked?6:5} paint={paint}/>}
+    <path d={`${left} ${right}`} fill="none" stroke={paint.dark} strokeOpacity=".32" strokeWidth={branched?15:14} strokeLinecap="round" strokeLinejoin="round"/>
+    <path d={`${left} ${right}`} fill="none" stroke={paint.shaft} strokeWidth={branched?11:10} strokeLinecap="round" strokeLinejoin="round"/>
+    {branched && <><path d="M40 45 V29" fill="none" stroke={paint.dark} strokeOpacity=".32" strokeWidth="14" strokeLinecap="round"/>
+      <path d="M40 45 V29" fill="none" stroke={paint.shaft} strokeWidth="10" strokeLinecap="round"/></>}
+    <path d="M36.5 62V47 M29 34L24 28 M48 34L54 27" fill="none" stroke="#fff" strokeWidth="1.7" strokeOpacity=".39" strokeLinecap="round"/>
+    <SoftTerminal x={longArms?18:21} y={22} rx={branched?7:6} ry={branched?9:8} angle={-23} id={id}/>
+    <SoftTerminal x={59} y={longArms?21:21} rx={branched?7:6} ry={branched?9:8} angle={19} id={id}/>
+    {branched ? <SoftTerminal x={40} y={29} rx={8} ry={9} id={id}/> :
+      <SoftTerminal x={40} y={38} rx={forked?6:5} ry={forked?7:6} id={id}/>}
     {family === 'membrane-receptor' && <circle cx="40" cy="27" r="3" fill={paint.mid}/>}
   </g>;
 }
@@ -181,7 +181,7 @@ export function MarkerVisual({ canonicalName, cellularLocation, visualFamily, vi
         {neutralNumeric ? <g><circle cx="40" cy="40" r="20" fill={glow} fillOpacity=".18" stroke={dark} strokeOpacity=".7" strokeWidth="2"/>
           <text x="40" y="47" textAnchor="middle" fill={dark} fontSize="23" fontWeight="600">#</text></g> :
           referenceVariant ? <ReferenceTreatment variant={referenceVariant} paint={paint} id={id}/> :
-          isSurface ? <SurfaceReceptor family={family} variant={visualVariant} paint={paint}/> :
+          isSurface ? <SurfaceReceptor family={family} variant={visualVariant} paint={paint} id={id}/> :
             isProtein ? <ProteinCluster family={family} variant={visualVariant} paint={paint}/> :
               <Pattern family={family} paint={paint}/>}
       </g>
