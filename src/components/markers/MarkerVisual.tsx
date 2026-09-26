@@ -25,6 +25,14 @@ function Pearl({ x, y, r, paint }: { x:number; y:number; r:number; paint:Paint }
   </g>;
 }
 
+function SoftTerminal({ x, y, rx, ry, angle=0, id }: { x:number; y:number; rx:number; ry:number; angle?:number; id:string }) {
+  return <g transform={`rotate(${angle} ${x} ${y})`}>
+    <ellipse cx={x+.7} cy={y+1.5} rx={rx+.3} ry={ry+.4} fill="#3f3767" fillOpacity=".13"/>
+    <ellipse cx={x} cy={y} rx={rx} ry={ry} fill={`url(#reference-bead-${id})`}/>
+    <ellipse cx={x-rx*.28} cy={y-ry*.44} rx={rx*.36} ry={ry*.19} fill="#fff" fillOpacity=".43"/>
+  </g>;
+}
+
 function SurfaceReceptor({ family, variant, paint }: { family:VisualFamily; variant?:string; paint:Paint }) {
   const branched = family === 'branched-receptor';
   const forked = family === 'forked-receptor';
@@ -54,7 +62,7 @@ function ReferenceTreatment({ variant, paint, id }: { variant:string; paint:Pain
     <ellipse cx="40" cy="39" rx="29" ry="26" fill={paint.glow} fillOpacity=".21" filter={`url(#bloom-${id})`}/>
     <path d="M26 43Q34 35 40 31Q47 38 54 43M40 31Q40 43 43 52" fill="none" stroke={paint.dark} strokeWidth="4.5" strokeOpacity=".75" strokeLinecap="round"/>
     <path d="M26 43Q34 35 40 31Q47 38 54 43M40 31Q40 43 43 52" fill="none" stroke={paint.shaft} strokeWidth="2.9" strokeLinecap="round"/>
-    {[[24,43,7],[40,27,7],[56,43,6],[43,54,6]].map(([x,y,r],i)=><Pearl key={i} x={x} y={y} r={r} paint={paint}/>)}
+    {[[24,43,6,7,-24],[40,27,6,7,16],[56,43,5,6,28],[43,54,5,6,-14]].map(([x,y,rx,ry,angle],i)=><SoftTerminal key={i} x={x} y={y} rx={rx} ry={ry} angle={angle} id={id}/>)}
   </g>;
 
   const cd30 = variant === 'reference-cd30';
@@ -64,19 +72,19 @@ function ReferenceTreatment({ variant, paint, id }: { variant:string; paint:Pain
     : cd7
       ? 'M74 42C62 43 51 45 42 43C33 43 27 37 22 28M42 43C32 44 22 48 17 58M42 43C35 50 33 57 31 63'
       : 'M46 76C43 64 39 52 37 44C29 42 22 36 18 27M37 44C44 38 49 27 51 20';
-  const terminals: [number,number,number][] = cd30
-    ? [[27,23,8],[51,17,8],[63,33,8],[32,35,7],[43,45,8]]
-    : cd7 ? [[20,25,8],[16,59,8],[30,63,7]]
-      : [[18,26,9],[51,19,9]];
+  const terminals: [number,number,number,number,number][] = cd30
+    ? [[27,23,7,9,-18],[51,17,7,9,16],[63,33,8,7,30],[32,35,7,8,-35],[43,45,8,7,14]]
+    : cd7 ? [[20,25,7,10,-35],[16,59,9,7,-35],[30,63,8,7,18]]
+      : [[18,26,7,11,-28],[51,19,7,11,21]];
   return <g>
-    <ellipse cx="40" cy="42" rx="27" ry="30" fill={paint.glow} fillOpacity=".16" filter={`url(#bloom-${id})`}/>
-    <path d={contour} fill="none" stroke={paint.dark} strokeOpacity=".72" strokeWidth={cd30?14:13} strokeLinecap="round" strokeLinejoin="round"/>
-    <path d={contour} fill="none" stroke={paint.shaft} strokeWidth={cd30?11:10} strokeLinecap="round" strokeLinejoin="round"/>
+    <ellipse cx="40" cy="42" rx="27" ry="30" fill={paint.glow} fillOpacity=".21" filter={`url(#bloom-${id})`}/>
+    <path d={contour} fill="none" stroke={paint.dark} strokeOpacity=".31" strokeWidth={cd30?15:14} strokeLinecap="round" strokeLinejoin="round"/>
+    <path d={contour} fill="none" stroke={paint.shaft} strokeWidth={cd30?12:11} strokeLinecap="round" strokeLinejoin="round"/>
     <path d={cd30 ? 'M31 69Q36 58 39 51M41 42Q45 32 49 23M46 44L56 39'
       : cd7 ? 'M68 41Q55 42 44 41M36 42Q29 39 25 33'
         : 'M43 69Q39 55 36 46M33 41Q25 37 21 31'}
-      fill="none" stroke="#fff" strokeOpacity=".66" strokeWidth="2.3" strokeLinecap="round"/>
-    {terminals.map(([x,y,r],i)=><Pearl key={i} x={x} y={y} r={r} paint={paint}/>)}
+      fill="none" stroke="#fff" strokeOpacity=".36" strokeWidth="1.7" strokeLinecap="round"/>
+    {terminals.map(([x,y,rx,ry,angle],i)=><SoftTerminal key={i} x={x} y={y} rx={rx} ry={ry} angle={angle} id={id}/>)}
   </g>;
 }
 
@@ -160,7 +168,7 @@ export function MarkerVisual({ canonicalName, cellularLocation, visualFamily, vi
     <defs>
       <linearGradient id={`shaft-${id}`} x1="0" y1="0" x2=".82" y2="1"><stop stopColor={light}/><stop offset=".18" stopColor={mid}/><stop offset=".54" stopColor={mid}/><stop offset="1" stopColor={dark}/></linearGradient>
       <radialGradient id={`bead-${id}`} cx="27%" cy="18%" r="86%"><stop stopColor="#fff" stopOpacity=".86"/><stop offset=".12" stopColor={light}/><stop offset=".34" stopColor={mid}/><stop offset=".65" stopColor={mid}/><stop offset="1" stopColor={dark}/></radialGradient>
-      <radialGradient id={`reference-bead-${id}`} cx="30%" cy="19%" r="82%"><stop stopColor={light} stopOpacity=".88"/><stop offset=".22" stopColor={light}/><stop offset=".62" stopColor={mid}/><stop offset="1" stopColor={dark} stopOpacity=".84"/></radialGradient>
+      <radialGradient id={`reference-bead-${id}`} cx="31%" cy="21%" r="94%"><stop stopColor="#fff" stopOpacity=".66"/><stop offset=".17" stopColor={light}/><stop offset=".68" stopColor={mid}/><stop offset="1" stopColor={dark} stopOpacity=".52"/></radialGradient>
       <filter id={`depth-${id}`} x="-35%" y="-35%" width="170%" height="180%">
         <feDropShadow dx="1" dy="2.2" stdDeviation="1.35" floodColor={dark} floodOpacity=".42"/>
       </filter>
