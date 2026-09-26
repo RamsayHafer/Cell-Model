@@ -1,7 +1,7 @@
 name: Cell Lab mobile visual check
 on:
   push:
-    branches: [main]
+    branches: [main, 'codex/approved-cell-resolution-4x']
   workflow_dispatch:
 jobs:
   screenshots:
