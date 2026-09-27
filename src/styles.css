@@ -83,3 +83,23 @@
 .reference-scene .marker-label--purple{min-width:104px}
 .reference-scene .marker-label--green:has(.marker-label__subtitle){min-width:125px;min-height:65px;font-weight:700}
 .reference-scene .marker-label__subtitle{font-size:14px}
+
+/* The reference sheet is a catalog of separate SVG marker visuals, not a cell texture. */
+.marker-set{flex-wrap:wrap}
+.marker-library{padding:16px 0 32px}
+.marker-library__note{font-size:12px;line-height:1.45;color:#766d71;margin:0 5px 17px}
+.marker-library__group{border:1px solid #e9e1ee;border-radius:19px;background:#ffffffa8;padding:15px 12px 17px;margin-bottom:13px}
+.marker-library__group h2{margin:0 0 13px;font-size:12px;color:#65538b;letter-spacing:.07em;text-transform:uppercase}
+.marker-library__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.marker-library__card{min-width:0;min-height:132px;border-radius:14px;background:linear-gradient(#fff,#faf8fd);display:flex;align-items:center;flex-direction:column;padding:9px 3px 2px}
+.marker-library__name{display:flex;align-items:center;justify-content:center;min-height:29px;width:100%;border-radius:16px;background:#e4f2ff;color:#245583;font-size:12px;font-weight:750;text-align:center;line-height:1.15;padding:3px}
+.marker-library__name--purple{background:#ebdafa;color:#592790}.marker-library__name--green{background:#d4f1e1;color:#216846}
+.marker-library__name--pink{background:#fce1ee;color:#91355e}.marker-library__name--coral{background:#ffdfd5;color:#a73627}
+.marker-library__name--orange{background:#ffebc9;color:#98521a}.marker-library__name--gold{background:#fff0cb;color:#885413}
+.marker-library__name--cyan{background:#daf8f9;color:#146977}.marker-library__name--indigo{background:#e3e5ff;color:#393a99}
+.marker-library__illustration{height:86px;display:grid;place-items:center}
+.marker-library__illustration .marker-visual{width:78px;height:78px;display:block}
+.receptor--pink,.marker-label--pink,.detail-sheet--pink{--marker:#d64790;--pale:#fbe2f0}
+.receptor--orange,.marker-label--orange,.detail-sheet--orange{--marker:#e98b31;--pale:#fff0dc}
+.receptor--indigo,.marker-label--indigo,.detail-sheet--indigo{--marker:#6767c7;--pale:#e9eaff}
+@media(max-width:360px){.marker-library__card{min-height:119px}.marker-library__illustration .marker-visual{width:69px;height:69px}}

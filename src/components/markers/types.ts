@@ -14,7 +14,7 @@ export type VisualFamily =
   | 'chromosomal-loss'
   | 'generic';
 
-export type MarkerPalette = 'blue' | 'coral' | 'purple' | 'green' | 'gold' | 'cyan';
+export type MarkerPalette = 'blue' | 'coral' | 'purple' | 'green' | 'gold' | 'cyan' | 'pink' | 'orange' | 'indigo';
 export type MarkerResultState = 'present' | 'reduced' | 'absent' | 'lost' | 'pending' | 'mentioned' | 'numeric';
 
 // This contract is independent of placement, tap targets, text, and evidence.

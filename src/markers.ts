@@ -14,19 +14,19 @@ export type Marker = MarkerVisualSpec & {
 };
 
 export const sampleMarkers: Marker[] = [
-  { id:'cd4', name:'CD4', canonicalName:'CD4', status:'Positive', palette:'blue', cellularLocation:'membrane', visualFamily:'membrane-receptor', resultState:'present', orientation:-20, x:34, y:35, labelX:19, labelY:16,
+  { id:'cd4', name:'CD4', canonicalName:'CD4', status:'Positive', palette:'blue', cellularLocation:'membrane', visualFamily:'membrane-receptor', visualVariant:'sheet-fork', resultState:'present', orientation:-20, x:34, y:35, labelX:19, labelY:16,
     normal:'CD4 is a surface protein found on helper T cells, which help coordinate immune responses.',
     reason:'Doctors may use CD4 staining to help describe which immune cells are present in a tissue sample.',
     quote:'“The cells in your sample were CD4-positive.”' },
-  { id:'cd30', name:'CD30', canonicalName:'CD30', status:'Present', palette:'coral', cellularLocation:'membrane', visualFamily:'branched-receptor', visualVariant:'reference-cd30', resultState:'present', size:1.2, orientation:16, x:71, y:33, labelX:83, labelY:16,
+  { id:'cd30', name:'CD30', canonicalName:'CD30', status:'Present', palette:'coral', cellularLocation:'membrane', visualFamily:'branched-receptor', visualVariant:'sheet-cluster', resultState:'present', size:1.2, orientation:16, x:71, y:33, labelX:83, labelY:16,
     normal:'CD30 is a signaling protein found on some activated immune cells. It helps regulate how immune cells respond and communicate.',
     reason:'Some lymphomas express CD30, so testing for it can help describe the cells and may inform treatment discussions.',
     quote:'“Your biopsy showed CD30-positive cells.”' },
-  { id:'cd7', name:'CD7', canonicalName:'CD7', status:'Loss', palette:'purple', cellularLocation:'membrane', visualFamily:'forked-receptor', visualVariant:'reference-cd7', resultState:'lost', orientation:-90, x:19, y:58, labelX:11, labelY:54,
+  { id:'cd7', name:'CD7', canonicalName:'CD7', status:'Loss', palette:'purple', cellularLocation:'membrane', visualFamily:'forked-receptor', visualVariant:'sheet-quad', resultState:'lost', orientation:-90, x:19, y:58, labelX:11, labelY:54,
     normal:'CD7 is a surface protein commonly found on T cells.',
     reason:'A change in CD7 staining is one detail pathologists consider alongside the rest of the biopsy.',
     quote:'“The report notes loss of CD7 expression.”' },
-  { id:'ki67', name:'Ki-67', canonicalName:'Ki-67', status:'Discussed', palette:'green', cellularLocation:'nuclear', visualFamily:'proliferation-pattern', resultState:'mentioned', x:54, y:58, labelX:86, labelY:80,
+  { id:'ki67', name:'Ki-67', canonicalName:'Ki-67', status:'Discussed', palette:'green', cellularLocation:'nuclear', visualFamily:'proliferation-pattern', visualVariant:'sheet-dots', resultState:'mentioned', x:54, y:58, labelX:86, labelY:80,
     normal:'Ki-67 is a protein associated with cells that are actively dividing.',
     reason:'Doctors may discuss the Ki-67 result as one way to describe how active the sampled cells appear.',
     quote:'“We also talked about the Ki-67 result.”' },
